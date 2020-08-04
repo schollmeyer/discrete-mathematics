@@ -1,4 +1,5 @@
 eins=function(...){1}
+zwei=zwei
 
 concept.gen=function(bg,steps=10000,f){
 MAX=-Inf
