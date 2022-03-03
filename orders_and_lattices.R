@@ -757,7 +757,7 @@ return(list(A=simple_triplet_matrix(I[jj],J[jj],V[jj],nrow=t,ncol=m+n),rhs=rhs[(
     
  
 
-extent.opt=extent.opt.c  ### standardmaessig wird immer Version extent.opt.c verwendet 
+extent_opt=extent_opt_c  ### standardmaessig wird immer Version extent.opt.c verwendet 
 
 
 
