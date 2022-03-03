@@ -273,7 +273,7 @@ minimal_extent <- function(object_subset,context,...){
   # computes minimal (w.r.t. cardinality (and therefore also w.r.t. set-inclusion))
   # extent that is a superset of the given set object_subset (given as indicator vector)
   m <- length(object_subset)
-  model <- min.k.objextent_opt_b(context,(1:m),rep(1,m))
+  model <- min_k_objextent_opt_b(context,(1:m),rep(1,m))
   model$modelsense <- "min"
   model$lb[which(object_subset==1)]=1
   ans <- gurobi(model,...)
@@ -283,14 +283,14 @@ minimal_extent <- function(object_subset,context,...){
 }
 
 ## test:
-set.seed(1234567)
-X <- rnorm(25*2);dim(X) <-c(25,2)
-plot(X)
-points(X[c(1,1),],col="red")
-I <- convex.incidence(X)
-temp <- rep(0,25)
-temp[1] <- 1
-ans <- minimal_extent(temp,I$context)
+#set.seed(1234567)
+#X <- rnorm(25*2);dim(X) <-c(25,2)
+#plot(X)
+#points(X[c(1,1),],col="red")
+#I <- convex.incidence(X)
+#temp <- rep(0,25)
+#temp[1] <- 1
+#ans <- minimal_extent(temp,I$context)
 
 
 #### noch zu checken:
