@@ -35,7 +35,7 @@ ranking_scaling <- function(X,C=0,remove.full.columns=TRUE){
 
 
 ####
-#### Einigermaßen kuratierter Teil (aber noch unkommentiert (sagte der Barbier von Sevilla))
+#### EinigermaÃŸen kuratierter Teil (aber noch unkommentiert (sagte der Barbier von Sevilla))
 
 
 is_strictly_K_concave <- function(depth_values,context,K,nrep=10000){
@@ -343,7 +343,7 @@ plot_non_closed_contours <- function(X,D,...){
 
 
 
-min_k_attr_generated <- function(extent,intent,context){  # Berecchnet für Begriff gegeben durch Umfang extent und Inhalt intent das maximale k, für das der Begriff k-Merkmalserzeugt ist (Kontext X muss ebenfalls mit übergeben werden)
+min_k_attr_generated <- function(extent,intent,context){  # Berecchnet fÃ¼r Begriff gegeben durch Umfang extent und Inhalt intent das maximale k, fÃ¼r das der Begriff k-Merkmalserzeugt ist (Kontext X muss ebenfalls mit Ã¼bergeben werden)
   m=nrow(context)
   n=ncol(context)
   model=k_extent_opt_b(context,(1:m),(1:m),K=ncol(context))
@@ -358,11 +358,11 @@ min_k_attr_generated <- function(extent,intent,context){  # Berecchnet für Begri
 min_k_obj_generated <-function(extent,intent,context){min_k_attr_generated(intent,extent,t(context))}
 
 ####
-#### Ende Einigermaßen kuratierter Teil
+#### Ende EinigermaÃŸen kuratierter Teil
 
 
-k_extent_opt_b <-function(X,gen.index,v,binary.variables="afap",K){##  extentopt: Version, wie TR 209, S.23 beschrieben, nur Ungleichungen (21) verschärft
-  # berechnet Model zur Optimierun von Zielfunktion v über alle K-Merkmalserzeugte Begriffe
+k_extent_opt_b <-function(X,gen.index,v,binary.variables="afap",K){##  extentopt: Version, wie TR 209, S.23 beschrieben, nur Ungleichungen (21) verschÃ¤rft
+  # berechnet Model zur Optimierun von Zielfunktion v Ã¼ber alle K-Merkmalserzeugte Begriffe
   m=dim(X)[1]
   n=dim(X)[2]
   mask=rep(0,m)
@@ -450,7 +450,7 @@ k_extent_opt_b <-function(X,gen.index,v,binary.variables="afap",K){##  extentopt
   A=rbind(A[(1:t),],c(rep(0,m),rep(1,n)))
   rhs=c(rhs[(1:t)],K)
   sense=c(sense[(1:t)],"<")
-  ##Über vtypes nochmalnachdenken:
+  ##Ãœber vtypes nochmalnachdenken:
   
   vtypes[(1:m)]="C"
   vtypes[-(1:m)]="B"
@@ -463,7 +463,7 @@ k_extent_opt_b <-function(X,gen.index,v,binary.variables="afap",K){##  extentopt
 #Focusing property
 
 #sampling: double sampling
-
+if(FALSE){
 rm(list=ls())
 
 library(gtools)
@@ -630,3 +630,4 @@ library(MASS)
 plot(sammon(D)$points)
 
 points(sammon(D)$points,col="red")
+}
