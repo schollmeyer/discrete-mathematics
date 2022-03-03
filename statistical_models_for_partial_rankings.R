@@ -182,7 +182,7 @@ skew_metric <- function(departure,destination){
   
 
 
-skew_metric(vec_to_incidence(ans[2,]),vec_to_incidence(ans[20,]))
+#skew_metric(vec_to_incidence(ans[2,]),vec_to_incidence(ans[20,]))
   #operator_closure_obj_input(e,a)
 
 
