@@ -7,6 +7,7 @@ library(Biobase) ##für Funktion rowMin
 library(geometry) ## für Fufnktion cart2bar (für Erstellung Kontext für Geometrie)
 
 source("statistical_models_for_partial_rankings.R",local=TRUE)
+source("fca_implications_general.R",local=TRUE)
 
 ###################################
 ########				   ########
