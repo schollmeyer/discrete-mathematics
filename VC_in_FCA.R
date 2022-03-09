@@ -12,9 +12,11 @@ sample_shatterable_K_objset <- function(context,K,subset=rep(0,nrow(context){
     
     return(NULL)
     
-    
-    
-
-
-
 }
+       
+ objset_is_shatterable <- function(subset,context){
+   reduced_context <- context[which(subset==1),]
+   reduced_context <- context[,which(colSums(reduced_context)==sum(subset)-1]
+                                     
+ return(nrow(unique(t(reduced_context)))==sum(subset)}
+                                  
