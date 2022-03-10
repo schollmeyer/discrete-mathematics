@@ -81,5 +81,5 @@ number_ignored_sets <- number_ignored_sets + length(which(extent==1 & subset==0)
 
 while(TRUE){e=sample_shatterable_K_ufg_candidate(aa,aa,K=6);if(test_if_union_free_generator(e,aa)){E=unique(rbind(E,e));print(dim(E))}}
 
-
+##
                                   
