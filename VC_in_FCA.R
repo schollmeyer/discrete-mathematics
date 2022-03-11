@@ -27,7 +27,7 @@ sample_shatterable_K_objset <- function(context,K,subset=rep(0,nrow(context))){
                                      
  return(nrow(unique(t(reduced_context)))==sum(subset))}
  
- is_ufg_generator <- function(subset,context,big_context){
+ #is_ufg_generator <- function(subset,context,big_context){
  
  
  
