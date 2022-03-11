@@ -55,8 +55,8 @@ sample_shatterable_K_objset <- function(context,K,subset=rep(0,nrow(context))){
  
 
 
-sample_shatterable_K_ufg_candidate <- function(context,big_context=context,K,subset=rep(0,nrow(context)),vector=NULL){
-  if(sum(subset)==K){return(list(subset,vector)}
+sample_shatterable_K_ufg_candidate <- function(context,big_context=context,K,subset=rep(0,nrow(context)),vector=NULL,number_ignored_vectors=0){
+  if(sum(subset)==K){return(list(subset,vector))}
   extent <- operator_closure_obj_input(subset,context)
   idx <- which(extent==0)
   if(sum(subset)==0){
@@ -66,7 +66,7 @@ sample_shatterable_K_ufg_candidate <- function(context,big_context=context,K,sub
 	return(sample_shatterable_K_ufg_candidate(context,big_context,K,new_subset,vector=which(new_subset==1)))
   }
 	
-number_ignored_sets <- number_ignored_sets + length(which(extent==1 & subset==0))
+number_ignored_vectors <- number_ignored_vectors + length(which(extent==1 & subset==0))
   for(k in sample(idx)){
   #print(k)
     new_subset <- subset
