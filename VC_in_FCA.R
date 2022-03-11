@@ -83,7 +83,7 @@ number_ignored_vectors <- number_ignored_vectors + length(which(extent==1 & subs
     
 }
 
-while(TRUE){e=NULL;while(is.null(e)){e=sample_shatterable_K_objset(aa,K=4);if(test_if_union_free_generator(e$subset,aa)){E=unique(rbind(E,e$subset));print(dim(E))}}}
+#while(TRUE){e=NULL;while(is.null(e)){e=sample_shatterable_K_objset(aa,K=4);if(test_if_union_free_generator(e$subset,aa)){E=unique(rbind(E,e$subset));print(dim(E))}}}
 
 test_if_union_free_generator <- function(subset,context){
   if(all(operator_closure_obj_input(subset,context)==context)){return(FALSE)}
