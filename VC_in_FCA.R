@@ -260,7 +260,7 @@ sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context)),
     new_subset <- subset
     new_subset[k] <-1
     if(objset_is_ufg_candidate(new_subset,context,K)){p=p*1/nrow(context);return(sample_ufg_K_objset_recursive(context,K,new_subset,p))}
-	  else{p <- p*(nrow(context)-1)/nrow(context)
+	  else{p <- p*(nrow(context)-1)/nrow(context)}
        
     }
     
