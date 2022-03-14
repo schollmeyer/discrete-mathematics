@@ -243,22 +243,24 @@ A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
   return(B$status=="OPTIMAL")}
 
 
-sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context))){
-  if(sum(subset)==K){return(list(subset=subset))}
+sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context)),p=1){
+  if(sum(subset)==K){return(list(subset=subset,p=p))}
   extent <- operator_closure_obj_input(subset,context)
   idx <- (1:nrow(context))#which(extent==0)
   if(sum(subset)==0){
+	  p=1/nrow(context)
     new_subset <- subset
 	new_subset[sample((1:nrow(context)),size=1)]=1
 	
-	return(sample_ufg_K_objset_recursive(context,K,new_subset))
+	return(sample_ufg_K_objset_recursive(context,K,new_subset,p))
   }
 	
   for(k in sample(idx)){
   #print(k)
     new_subset <- subset
     new_subset[k] <-1
-    if(objset_is_ufg_candidate(new_subset,context,K)){return(sample_ufg_K_objset_recursive(context,K,new_subset))}
+    if(objset_is_ufg_candidate(new_subset,context,K)){p=p*1/nrow(context);return(sample_ufg_K_objset_recursive(context,K,new_subset,p))}
+	  else{p <- p*(nrow(context)-1)/nrow(context)
        
     }
     
