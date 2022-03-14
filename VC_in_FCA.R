@@ -246,7 +246,7 @@ A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
 sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context))){
   if(sum(subset)==K){return(list(subset=subset))}
   extent <- operator_closure_obj_input(subset,context)
-  idx <- which(extent==0)
+  idx <- (1:nrow(context))#which(extent==0)
   if(sum(subset)==0){
     new_subset <- subset
 	new_subset[sample((1:nrow(context)),size=1)]=1
