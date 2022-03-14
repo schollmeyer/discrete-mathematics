@@ -266,24 +266,24 @@ sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context)))
     
 }
 
-e=sample_ufg_K_objset2(aa,K=3)
+#e=sample_ufg_K_objset2(aa,K=3)
 
 
- for(k in (1:100000)){e=sample_K_ufg_objset2(aa,K=4);print(c(dim(E),"##########################"));E=rbind(E,e)}
- D=rep(0,nrow(aa))
- for(k in (1:nrow(E))){
+ #for(k in (1:100000)){e=sample_K_ufg_objset2(aa,K=4);print(c(dim(E),"##########################"));E=rbind(E,e)}
+ #D=rep(0,nrow(aa))
+ #for(k in (1:nrow(E))){
  
- D=D+operator_closure_obj_input(E[k,],aa)}
+ #D=D+operator_closure_obj_input(E[k,],aa)}
  
  
  #############
  
  
- X=combinations(10,3)-1
+ #X=combinations(10,3)-1
  
- E=array(0,c(nrow(X),10))
- for(k in (1:nrow(X))){
+ #E=array(0,c(nrow(X),10))
+ #for(k in (1:nrow(X))){
  
- e=rep(0,10)
- e[X[k,]]=1
- if(objset_is_ufg_candidate){D[k]=D[k]+1
+ #e=rep(0,10)
+ #e[X[k,]]=1
+ #if(objset_is_ufg_candidate){D[k]=D[k]+1
