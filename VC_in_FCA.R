@@ -251,7 +251,7 @@ sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context)))
     new_subset <- subset
 	new_subset[sample((1:nrow(context)),size=1)]=1
 	
-	return(sample_ufg_K_objset2(context,K,new_subset))
+	return(sample_ufg_K_objset_recursive(context,K,new_subset))
   }
 	
   for(k in sample(idx)){
