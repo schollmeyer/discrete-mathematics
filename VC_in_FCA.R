@@ -127,16 +127,16 @@ return(e)}
 
 
 
-sample_K_ufg_objset <- function(context,K){
+sample_K_ufg_objset <- function(context,K){### smpled ufg-Prämisse der Kardinalität K, ACHTUNG: NICHT UNIFORM
   i<- sample(1:nrow(context))
   perm_context <- context[i,]
   A=ufg_dimension(perm_context)
-  A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context))))
+  A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
   A$rhs=c(A$rhs,K)
   A$sense=c(A$sense,">=")
-  A$obj=c(-((1:nrow(context))^0.5+CC*runif(nrow(context))),rep(0,ncol(context)))
+  A$obj=c(-((1:nrow(context))^0.5+CC*runif(nrow(context))),rep(0,ncol(context)),rep(0,nrow(context)))
   A <<- A
-  B=gurobi(A)
+  B=gurobi(A,list(outputflag=0))
   #B <<- B
   e<- rep(0,nrow(context))
   e[i]=(B$x[(1:nrow(context))])
@@ -148,8 +148,8 @@ ufg_dimension <-function(X,additional.constraint=TRUE){  # Berechnet VC-Dimensio
   m=dim(X)[1]
   n=dim(X)[2]
   ans=list()
-  ans$A=array(0,c(2*(m+n)+ m  ,m+n + m))
-  ans$rhs=rep(0,2*(m+n))
+  ans$A=array(0,c(2*(m+n)+ m +n  ,m+n + m))
+  ans$rhs=rep(0,2*(m+n)+m+n)
   ans$sense=rep("",2*(m+n))
   t=1
   for(i in (1:m)){
@@ -184,7 +184,7 @@ ufg_dimension <-function(X,additional.constraint=TRUE){  # Berechnet VC-Dimensio
     t=t+1
   }
    
-for(i in (1:m)){
+for(i in (1:m)){     ## Fuer ufg: Gegenstand b mit entsprechend Nullen muss existieren
    j=which(X[i,]==1)
    ans$A[t,j+m]=-1
    #ans$A[t,(1:m)]=-1
@@ -193,6 +193,25 @@ for(i in (1:m)){
    ans$sense[t]=">="   
    t=t+1
 }   
+
+for(j in (1:n)){
+	i <- which(X[,j]==0)
+	ans$A[t,i+m+n] <- 1
+		ans$A[t,i] <- -1 
+		ans$rhs[t] <- 0
+		ans$sense[t] <- "<="
+		t <- t+1
+		}
+		t <- t-1
+		
+		ans$A <- ans$A[(1:t),]
+		ans$sense <- ans$sense[(1:t)]
+		ans$rhs <- ans$rhs[(1:t)]
+		
+		
+
+
+
 ans$modelsense="max"
 ans$lb=rep(0,m+n+m)
 ans$ub=rep(1,m+n+m)
@@ -213,3 +232,58 @@ return(ans)}
 
 #e=NULL;while(is.null(e)){e=sample_shatterable_K_objset2(aa,K=5)}
 	 #
+objset_is_ufg_candidate <- function(subset,context,K){
+A <- ufg_dimension(context)
+A$lb[which(subset==1)]=1
+A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
+  A$rhs=c(A$rhs,K)
+  A$sense=c(A$sense,">=")
+  A$obj=NULL
+  B=gurobi(A)
+  return(B$status=="OPTIMAL")}
+
+
+sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context))){
+  if(sum(subset)==K){return(list(subset=subset))}
+  extent <- operator_closure_obj_input(subset,context)
+  idx <- which(extent==0)
+  if(sum(subset)==0){
+    new_subset <- subset
+	new_subset[sample((1:nrow(context)),size=1)]=1
+	
+	return(sample_ufg_K_objset2(context,K,new_subset))
+  }
+	
+  for(k in sample(idx)){
+  #print(k)
+    new_subset <- subset
+    new_subset[k] <-1
+    if(objset_is_ufg_candidate(new_subset,context,K)){return(sample_ufg_K_objset2(context,K,new_subset))}
+       
+    }
+    
+    return(NULL)
+    
+}
+
+e=sample_ufg_K_objset2(aa,K=3)
+
+
+ for(k in (1:100000)){e=sample_K_ufg_objset2(aa,K=4);print(c(dim(E),"##########################"));E=rbind(E,e)}
+ D=rep(0,nrow(aa))
+ for(k in (1:nrow(E))){
+ 
+ D=D+operator_closure_obj_input(E[k,],aa)}
+ 
+ 
+ #############
+ 
+ 
+ X=combinations(10,3)-1
+ 
+ E=array(0,c(nrow(X),10))
+ for(k in (1:nrow(X))){
+ 
+ e=rep(0,10)
+ e[X[k,]]=1
+ if(objset_is_ufg_candidate){D[k]=D[k]+1
