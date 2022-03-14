@@ -239,7 +239,7 @@ A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
   A$rhs=c(A$rhs,K)
   A$sense=c(A$sense,">=")
   A$obj=NULL
-  B=gurobi(A)
+  B=gurobi(A,list(outputflag=0))
   return(B$status=="OPTIMAL")}
 
 
