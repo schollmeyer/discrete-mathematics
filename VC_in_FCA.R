@@ -247,7 +247,7 @@ sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context)),
   if(sum(subset)==K){return(list(subset=subset,p=prod(count)))}
   extent <- operator_closure_obj_input(subset,context)
   idx <- which(subset==0)#;(1:nrow(context))#which(extent==0)
-	print(idx)
+	#print(idx)
   if(sum(subset)==0){
 	  p=1/nrow(context)
     new_subset <- subset
@@ -259,7 +259,9 @@ sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context)),
   for(k in sample(idx)){
   #print(k)
 	  if(sum(subset)>0){
-	  count[sum(subset)]=count[sum(subset)]+1}
+	  count[sum(subset)]=count[sum(subset)]+1
+	  
+	  print(count)}
     new_subset <- subset
     new_subset[k] <-1
     if(objset_is_ufg_candidate(new_subset,context,K)){p=p*1/nrow(context);return(sample_ufg_K_objset_recursive(context,K,new_subset,count))}
