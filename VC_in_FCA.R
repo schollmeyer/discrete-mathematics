@@ -244,7 +244,7 @@ A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
 
 
 sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context)),count=rep(0,K)){
-  if(sum(subset)==K){return(list(subset=subset,p=prod(count)))}
+  if(sum(subset)==K){return(list(subset=subset,p=prod(count[(1:(K-1))])))}
   extent <- operator_closure_obj_input(subset,context)
   idx <- which(subset==0)#;(1:nrow(context))#which(extent==0)
 	#print(idx)
