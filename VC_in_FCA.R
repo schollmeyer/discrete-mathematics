@@ -258,7 +258,7 @@ sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context)))
   #print(k)
     new_subset <- subset
     new_subset[k] <-1
-    if(objset_is_ufg_candidate(new_subset,context,K)){return(sample_ufg_K_objset2(context,K,new_subset))}
+    if(objset_is_ufg_candidate(new_subset,context,K)){return(sample_ufg_K_objset_recursive(context,K,new_subset))}
        
     }
     
