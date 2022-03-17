@@ -235,7 +235,7 @@ return(ans)}
 objset_is_ufg_candidate <- function(subset,context,K){
 A <- ufg_dimension(context)
 A$lb[which(subset==1)]=1
-A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
+  A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
   A$rhs=c(A$rhs,K)
   A$sense=c(A$sense,">=")
   A$obj=NULL
@@ -272,6 +272,245 @@ sample_ufg_K_objset_recursive <- function(context,K,subset=rep(0,nrow(context)),
     return(NULL)
     
 }
+
+
+###############
+###############
+###############
+
+#Kurierter Teil
+
+###############
+###############
+###############
+
+
+sample_ufg_K_objset_recursive_a <- function(context,K){
+p <-1 
+Subset <- rep(0,nrow(context))
+Vector=NULL
+for(k in (1:(K))){
+   
+   counter <-1
+   extent <- operator_closure_obj_input(Subset,context)
+   print(c("extent",extent))
+   idx <- which(extent==0)
+   print(c("idx",idx))
+   #counter=1
+   #while(TRUE){
+   idx2=NULL
+   for(l in idx){
+   
+    
+     #l <- sample(idx,size=1)
+	 #print(c(l,"mm"))
+	 new_subset <- Subset
+	 new_subset[l] <- 1
+	 if(objset_is_ufg_candidate(new_subset,context,K)){
+	 idx2=c(idx2,l)
+	 }
+	 }
+	 
+	 print(c("idx2",idx2))
+	 
+	 p <- c(p,1/length(idx2))#/length(idx)#counter/length(idx)#1/counter
+	 if(length(idx2)>1){print("a");	 l=sample(idx2,size=1)}# <- new_subset
+	 else{print("b");l=idx2}
+	 print(c("l",l))
+	 Subset[l] <- 1
+	 #print(Subset)
+	 
+	 Vector <- c(Vector,l)
+	 print(l)
+	 print(Vector)
+	 
+	 
+    
+   
+     #break   
+     #}
+	 #else{counter <- counter + 1}
+	#}
+}
+
+return(list(Subset = Subset, p=p,Vector=Vector))}
+
+
+#####
+
+
+sample_ufg_K_objset_recursive_b <- function(context,K){
+p <-1 
+Subset <- rep(0,nrow(context))
+Vector=NULL
+for(k in (1:(K))){
+   
+   counter <-1
+   extent <- operator_closure_obj_input(Subset,context)
+   #print(c("extent",extent))
+   idx <- which(extent==0)
+   #print(c("idx",idx))
+   counter=1
+   while(TRUE){
+	if(length(idx)>1){ l=sample(idx,size=1)}
+	else{l=idx}
+   
+   
+     new_subset <- Subset
+	 new_subset[l] <- 1
+	 if(objset_is_ufg_candidate(new_subset,context,K)){
+	 Vector <- c(Vector,l)
+	 Subset <- new_subset
+	 p <- c(p,counter/length(idx))
+	 break
+	 }
+	 else{counter <- counter +1}
+	 }
+	 
+	# print(c("idx2",idx2))
+	 
+	 #p <- c(p,1/length(idx2))#/length(idx)#counter/length(idx)#1/counter
+	 #if(length(idx2)>1){print("a");	 l=sample(idx2,size=1)}# <- new_subset
+	 #else{print("b");l=idx2}
+	 #print(c("l",l))
+	 Subset[l] <- 1
+	 #print(Subset)
+	 
+	 #Vector <- c(Vector,l)
+	 #print(l)
+	 #print(Vector)
+	 
+	 
+    
+   
+     #break   
+     #}
+	 #else{counter <- counter + 1}
+	#}
+}
+
+return(list(Subset = Subset, p=p,Vector=Vector))}
+
+#e=sample_ufg_K_objset_recursive(aa,K=3)
+
+
+
+sample_ufg_K_objset_recursive_c <- function(context,K,N=rep(nrow(context),K)){
+
+	model <- ufg_dimension(context)
+    model$A=rbind(model$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
+    model$rhs=c(model$rhs,K)
+    model$sense=c(model$sense,">=")
+    model$obj=NULL
+
+NN <- N
+p <-1 
+Subset <- rep(0,nrow(context))
+Vector=NULL
+idx3 <- NULL
+for(k in (1:(K))){
+   
+   counter <-1
+   extent <- operator_closure_obj_input(Subset,context)
+   #print(c("extent",extent))
+   idx <- which(extent==0)
+   #print(c("idx",idx))
+   #counter=1
+   #while(TRUE){
+   idx2=NULL
+   NN[k]=min(N[k],length(idx))
+   idx_sample <- sample(idx,size=NN[k])
+   for(l in idx_sample){
+   
+    
+     #l <- sample(idx,size=1)
+	 #print(c(l,"mm"))
+	 new_subset <- Subset
+	 new_subset[l] <- 1
+	 model$lb[which(new_subset==1)] <- 1
+	 model$lb[which(new_subset==0)] <- 0
+	 model$ub[idx3] <- 0
+	 ans <- gurobi(model,list(outputflag=0))
+	 if(ans$status=="OPTIMAL"){#objset_is_ufg_candidate(new_subset,context,K)){
+	 idx2=c(idx2,l)
+	  #print(l)
+	 #print(Vector)
+	 }
+	 else{idx3=c(idx3,l)}
+	 }
+	 
+	 Vector <- c(Vector,idx2[1])
+	 Subset[idx2[1]] <- 1
+	 #print(c("idx2",idx2))
+	 
+	 p <- c(p,length(idx)*length(idx2)/NN[k])#1/length(idx2))#/length(idx)#counter/length(idx)#1/counter
+	 #if(length(idx2)>1){print("a");	 l=sample(idx2,size=1)}# <- new_subset
+	 #else{print("b");l=idx2}
+	 #print(c("l",l))
+	 
+	 #print(Subset)
+	 
+	 
+	 
+	 
+    
+   
+     #break   
+     #}
+	 #else{counter <- counter + 1}
+	#}
+}
+
+return(list(Subset = Subset, p=p,Vector=Vector))}
+
+
+
+
+count <- function(E,e){ #countss umber of vectors in E that are identical to e
+	count <- 0
+	for(l in (1:nrow(E))){
+		if(all(E[l,]==e)){count <- count+1}
+	}
+return(count)}
+
+
+counts <-function(E,p){  # computes counts for all vectors in E
+	EE <- unique(cbind(E,p))
+	ans <- NULL
+	for(k in (1:nrow(EE))){
+		temp <- count(E,EE[k,(1:(ncol(EE)-1))])
+		ans  <- rbind(ans,c(temp,EE[k, ncol(EE)]))
+}
+return(ans)}
+
+
+
+E=NULL;p=NULL
+
+for(k in (1:1000000)){e=sample_ufg_K_objset_recursive_c(aa,K=3,N=c(7,7,7));if(length(e$Vector)==3){E=rbind(E,e$Vector);p=c(p,prod(e$p))};print(c(dim(E),"#####################################################################"))}
+
+EE=weighted.repr(E,p)
+x=1/EE$count
+x=x/mean(x)
+y=EE$mean.y
+y=y/mean(y)
+plot(x,y)
+lines((0:10),(0:10))
+
+
+
+#####
+pp=rep(0,nrow(E))
+for(k in (1:nrow(E))){pp[k]=prod(p[k,(1:4)])}
+q=counts(E,pp)
+q[,1]=q[,1]/nrow(E)
+plot(q)
+lines(q[,1],q[,1])
+
+
+###############
+###############
+###############
 
 #e=sample_ufg_K_objset2(aa,K=3)
 
