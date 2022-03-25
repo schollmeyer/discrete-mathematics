@@ -232,14 +232,14 @@ return(ans)}
 
 #e=NULL;while(is.null(e)){e=sample_shatterable_K_objset2(aa,K=5)}
 	 #
-objset_is_ufg_candidate <- function(subset,context,K){
+objset_is_ufg_candidate <- function(subset,context,K,threads){
 A <- ufg_dimension(context)
 A$lb[which(subset==1)]=1
   A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
   A$rhs=c(A$rhs,K)
   A$sense=c(A$sense,">=")
   A$obj=NULL
-  B=gurobi(A,list(outputflag=0))
+  B=gurobi(A,list(outputflag=0,threads=threads))
   return(B$status=="OPTIMAL")}
 
 
@@ -339,7 +339,7 @@ return(list(Subset = Subset, p=p,Vector=Vector))}
 #####
 
 
-sample_ufg_K_objset_recursive_b <- function(context,K){
+sample_ufg_K_objset_recursive_b <- function(context,K,threads){
 p <-1 
 Subset <- rep(0,nrow(context))
 Vector=NULL
@@ -358,7 +358,7 @@ for(k in (1:(K))){
    
      new_subset <- Subset
 	 new_subset[l] <- 1
-	 if(objset_is_ufg_candidate(new_subset,context,K)){
+	 if(objset_is_ufg_candidate(new_subset,context,K,threads=threads)){
 	 Vector <- c(Vector,l)
 	 Subset <- new_subset
 	 p <- c(p,counter/length(idx))
