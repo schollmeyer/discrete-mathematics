@@ -127,7 +127,7 @@ downarrow=function(x,bg){ # berechnet Menge aller Elemente unterhalb einer gegeb
 
 next_closure=function(cop,context,stepsize,n=dim(context)[2],Nmax=700000){   # Next closure Algorithmus zur Berechnung aller Huellen eines gegebenen Hüllenoperators cop vgl. z.B. Ganter. Diskrete Mathematik: geordnete Mengen S.86
   A=rep(0,n)
-  A=cop(A,bg)
+  A=cop(A,context)
   ans=array(as.logical(0),c(Nmax,n))
   ans[1,]=A
   t=2
@@ -141,7 +141,7 @@ next_closure=function(cop,context,stepsize,n=dim(context)[2],Nmax=700000){   # N
      }
   A=temp
   ans[t,]=temp
-  cond.print(t,step=t,stepsize=bg$stepsize)
+  cond.print(t,step=t,stepsize=stepsize)
   t=t+1
   if(all(temp==1)){return(ans[(1:(t-1)),])}
   if(t>Nmax){ans=rbind(ans,array(as.logical(0),c(Nmax,n)));Nmax=2*Nmax}
@@ -215,11 +215,11 @@ L.infty=function(A,context){   ## Operator L_infty vgl. Ganter, Wille 1996 S. 85
    } 
 return(temp)}
 
-H.attr=function(A,bg){PSI(PHI(A,context),context)} ## Berechnet zu Merkmalsmenge A (gegeben durch A[i]=1 iff Merkmal i ist in Menge A, 0 sonst) deren Hülle PSI(PHI(A))
-	H.obj=function(A,bg){PHI(PSI(A,context),context)} ## Berechnet zu Gegenstandsmenge A (gegeben durch A[i]=1 iff Gegenstand i ist in Menge A, 0 sonst) deren Hülle PHI(PSI(A))
+H.attr=function(A,context){PSI(PHI(A,context),context)} ## Berechnet zu Merkmalsmenge A (gegeben durch A[i]=1 iff Merkmal i ist in Menge A, 0 sonst) deren Hülle PSI(PHI(A))
+	H.obj=function(A,context){PHI(PSI(A,context),context)} ## Berechnet zu Gegenstandsmenge A (gegeben durch A[i]=1 iff Gegenstand i ist in Menge A, 0 sonst) deren Hülle PHI(PSI(A))
 	
 implications=function(bg){               ### Hier stimmt was nicht!!!
-  a=next.closure(L.infty,bg)
+  a=next_closure(L.infty,bg)
   print((a))
   CS=colSums(bg$context)
   i=which(CS==dim(bg$context)[1] )
@@ -244,7 +244,7 @@ concept_lattice=function(context,compute.extents=TRUE,stepsize=20000){### Berech
 																		### stepsize beeinflusst nur die Anzeige des Berechnungsfortschritts: Pro  stepsize erzeugter Begriffe wird einmal ausgegeben, wieviele Begriffe bereits berechnet wurden
    
    ans=list()
-   ans$intents=next.closure(H.attr,context,stepsize=stepsize)
+   ans$intents=next_closure(H.attr,context,stepsize=stepsize)
    m=dim(ans$intents)[1]
    n=dim(context)[1]
    ans$concepts=rep("",m)
@@ -1787,7 +1787,7 @@ return(ans)}
 
 
 
-local_object_VCdims=function(X,indexs=(1:dim(X)[1]),outputflag,timelimit,pool=FALSE,transpose=TRUE,additional.constraint=TRUE){
+local_object_VCdims=function(X,indexs=(1:dim(X)[1]),outputflag,timelimit,pool=FALSE,transpose=TRUE,additional.constraint=TRUE,threads=1){
 # Berechnet lokale Gegenstands-VC-dimension:
 # X : Kontext
 # indexs: Indizes derjenigen Punkte, für die die lokale Gegenstands-VC-Dimension berechnet werden soll
@@ -1804,7 +1804,7 @@ local_object_VCdims=function(X,indexs=(1:dim(X)[1]),outputflag,timelimit,pool=FA
   vccounts=rep(0,m)
   for(k in indexs){
     if(transpose){
-	  temp=extent.VC(t(X),additional.constraint=additional.constraint)
+	  temp=extent_VC(t(X),additional.constraint=additional.constraint)
       temp$lb[k+n]=1
 	}
 	else{
@@ -1814,7 +1814,7 @@ local_object_VCdims=function(X,indexs=(1:dim(X)[1]),outputflag,timelimit,pool=FA
 	
     
     if(pool){a=gurobi(temp,list(outputflag=outputflag,timelimit=timelimit,PoolSolutions=100000000,PoolSearchMode=2,Poolgap=0.00001))}
-	else{a=gurobi(temp,list(outputflag=outputflag,timelimit=timelimit))}
+	else{a=gurobi(temp,list(outputflag=outputflag,timelimit=timelimit,threads=threads))}
 	a <<- a
     ans[[k]]=a	
     vcdims[k]=a$objval
