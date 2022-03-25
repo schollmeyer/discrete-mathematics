@@ -507,6 +507,16 @@ q[,1]=q[,1]/nrow(E)
 plot(q)
 lines(q[,1],q[,1])
 
+############## UFG Depth
+
+ufg_depth <- function(context,subset_sample,p){
+   depth <- rep(0,nrow(context))
+   for(k in (1:nrow(subset_sample))){
+      extent <- operator_closure_obj_input(subset_sample[k,],context)
+	  depth <- depth +extent*1/p[k]
+	}
+
+return(depth)}
 
 ###############
 ###############
