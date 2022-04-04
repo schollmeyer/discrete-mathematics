@@ -237,7 +237,7 @@ A <- ufg_dimension(context)
 A$lb[which(subset==1)]=1
   A$A=rbind(A$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
   A$rhs=c(A$rhs,K)
-  A$sense=c(A$sense,">=")
+  A$sense=c(A$sense,"=")
   A$obj=NULL
   B=gurobi(A,list(outputflag=0,threads=threads))
   return(B$status=="OPTIMAL")}
@@ -395,7 +395,7 @@ return(list(Subset = Subset, p=p,Vector=Vector))}
 
 
 
-sample_ufg_K_objset_recursive_c <- function(context,K,N=rep(nrow(context),K)){
+sample_ufg_K_objset_recursive_c <- function(context,K,N=rep(nrow(context),K),threads){
 
 	model <- ufg_dimension(context)
     model$A=rbind(model$A,c(rep(1,nrow(context)),rep(0,ncol(context)),rep(0,nrow(context))))
@@ -430,7 +430,7 @@ for(k in (1:(K))){
 	 model$lb[which(new_subset==1)] <- 1
 	 model$lb[which(new_subset==0)] <- 0
 	 model$ub[idx3] <- 0
-	 ans <- gurobi(model,list(outputflag=0))
+	 ans <- gurobi(model,list(outputflag=0,threads=threads))
 	 if(ans$status=="OPTIMAL"){#objset_is_ufg_candidate(new_subset,context,K)){
 	 idx2=c(idx2,l)
 	  #print(l)
@@ -485,27 +485,27 @@ return(ans)}
 
 
 
-E=NULL;p=NULL
+#E=NULL;p=NULL
 
-for(k in (1:1000000)){e=sample_ufg_K_objset_recursive_c(aa,K=3,N=c(7,7,7));if(length(e$Vector)==3){E=rbind(E,e$Vector);p=c(p,prod(e$p))};print(c(dim(E),"#####################################################################"))}
+#for(k in (1:1000000)){e=sample_ufg_K_objset_recursive_c(aa,K=3,N=c(7,7,7));if(length(e$Vector)==3){E=rbind(E,e$Vector);p=c(p,prod(e$p))};print(c(dim(E),"#####################################################################"))}
 
-EE=weighted.repr(E,p)
-x=1/EE$count
-x=x/mean(x)
-y=EE$mean.y
-y=y/mean(y)
-plot(x,y)
-lines((0:10),(0:10))
+#EE=weighted.repr(E,p)
+#x=1/EE$count
+#x=x/mean(x)
+#y=EE$mean.y
+#y=y/mean(y)
+#plot(x,y)
+#lines((0:10),(0:10))
 
 
 
 #####
-pp=rep(0,nrow(E))
-for(k in (1:nrow(E))){pp[k]=prod(p[k,(1:4)])}
-q=counts(E,pp)
-q[,1]=q[,1]/nrow(E)
-plot(q)
-lines(q[,1],q[,1])
+#pp=rep(0,nrow(E))
+#for(k in (1:nrow(E))){pp[k]=prod(p[k,(1:4)])}
+#q=counts(E,pp)
+#q[,1]=q[,1]/nrow(E)
+#plot(q)
+#lines(q[,1],q[,1])
 
 ############## UFG Depth
 
