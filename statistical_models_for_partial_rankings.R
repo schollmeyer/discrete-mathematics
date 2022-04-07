@@ -233,7 +233,7 @@ nu_closed <- function(E,context){
   m <- sum(E)
   if(m==1){return(which(E==1))}
   if(m==1 | all(colSums(context[which(E==1),]) %in% c(0,m))){return(which(E==1)[1])}
-    extr <- extreme_points(context)
+    extr <- extreme_points(E,context)
     ans <- rep(0,nrow(context))
     ans[which(extr==1)] <- 1
     extr <- operator_closure_obj_input(extr,context)
