@@ -226,7 +226,7 @@ nu_min <- function(E,context,...){
   if(m==1 | all(colSums(context[which(E==1),]) %in% c(0,m))){return(which(E==1)[1])}
   I <- calculate_psi(E,context)
   ans <- min_k_obj_generated(E,I,context)
-  bns <- gurobi(ans,...)
+  bns <- gurobi(ans,param=list(outputflag=0),...)
   return(which(bns$x[-(1:ncol(context))]==1))}
 
 nu_closed <- function(E,context){
