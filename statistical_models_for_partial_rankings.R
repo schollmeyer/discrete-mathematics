@@ -240,8 +240,18 @@ nu_closed <- function(E,context){
     ans[which(E==1 & extr==0)] <- 1
   return(ans)}
     
-  
-  
+  extreme_points <- function(subset,context){
+    i <- which(subset==1)
+    ans_idx <- NULL
+    for(k in i){
+      temp <- subset
+      temp[k] <-0
+      temp <- operator_closure_obj_input(temp,context)
+      if(temp[k]==0){ans_idx <- c(ans_idx,k)}
+     }
+    ans <- rep(0,nrow(context))
+    ans[ans_idx] <- 1
+  return(ans)}
   
   
 
