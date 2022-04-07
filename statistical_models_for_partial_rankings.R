@@ -238,7 +238,7 @@ nu_closed <- function(E,context){
     ans[which(extr==1)] <- 1
     extr <- operator_closure_obj_input(extr,context)
     ans[which(E==1 & extr==0)] <- 1
-  return(ans)}
+  return(which(ans==1))}
     
   extreme_points <- function(subset,context){
     i <- which(subset==1)
