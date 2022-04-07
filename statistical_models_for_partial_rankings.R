@@ -243,7 +243,7 @@ nu_closed <- function(E,context){
   
   
   
-  }
+  
 
 
 
