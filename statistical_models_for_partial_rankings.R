@@ -226,8 +226,34 @@ nu_min <- function(E,context,...){
   if(m==1 | all(colSums(context[which(E==1),]) %in% c(0,m))){return(which(E==1)[1])}
   I <- calculate_psi(E,context)
   ans <- min_k_obj_generated(E,I,context)
-  bns <- gurobi(ans,...)
+  bns <- gurobi(ans,param=list(outputflag=0),...)
   return(which(bns$x[-(1:ncol(context))]==1))}
+
+nu_closed <- function(E,context){
+  m <- sum(E)
+  if(m==1){return(which(E==1))}
+  if(m==1 | all(colSums(context[which(E==1),]) %in% c(0,m))){return(which(E==1)[1])}
+    extr <- extreme_points(E,context)
+    ans <- rep(0,nrow(context))
+    ans[which(extr==1)] <- 1
+    extr <- operator_closure_obj_input(extr,context)
+    ans[which(E==1 & extr==0)] <- 1
+  return(which(ans==1))}
+    
+  extreme_points <- function(subset,context){
+    i <- which(subset==1)
+    ans_idx <- NULL
+    for(k in i){
+      temp <- subset
+      temp[k] <-0
+      temp <- operator_closure_obj_input(temp,context)
+      if(temp[k]==0){ans_idx <- c(ans_idx,k)}
+     }
+    ans <- rep(0,nrow(context))
+    ans[ans_idx] <- 1
+  return(ans)}
+  
+  
 
 
 
