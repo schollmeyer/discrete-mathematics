@@ -2195,3 +2195,48 @@ sb1=function(XR,p){
    diag(B[K,,])=1}
  return(list(A=A,B=B))}
 
+##################################################################
+##################################################################
+################                                 #################
+###############     Data Depth in FCA             ################  
+################                                 #################
+##################################################################
+
+
+
+
+
+
+
+star_depth <- function(context, index_modus){    ## computes a simple depth function by counting how many points are between a given point and a center (index_modus)
+
+# This depth function is not quasiconcave but star-haped if the context is complemented (is this assumption needed? NO!)
+  m <- nrow(context)
+  ans <- rep(0,m)
+  for(k in (1:m)){
+     extent <- rep(0,m)
+     extent[index_modus] <- 1
+     extent[k] <- 1
+     extent <- operator_closure_obj_input(extent,context)
+     ans[k] <- sum(extent) 
+
+  }
+return(m-ans)
+}
+
+
+star_depth2 <- function(context, index_modus){ ## computes a another simple depth function adding for every point to all other points between this point and a center a one 
+
+# This depth function is not quasiconcave but star-haped if the context is complemented (is this assumption needed? NO!)
+
+   m <- nrow(context)
+   ans <- rep(0,m)
+   for(k in (1:m)){
+     extent <- rep(0,m)
+     extent[index_modus] <- 1
+     extent[k] <- 1
+     extent <- operator_closure_obj_input(extent,context)
+     ans[which(extent==1)]=ans[which(extent==1)]+1
+   }
+return(ans)
+}
