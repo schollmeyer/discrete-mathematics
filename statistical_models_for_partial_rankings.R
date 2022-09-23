@@ -1,7 +1,7 @@
 ######
 
 
-ranking_scaling <- function(X,C=0,remove.full.columns=TRUE){
+ranking_scaling <- function(X,remove.full.columns=FALSE,complemented=FALSE){
   m=dim(X)[1]
   n=dim(X)[2]
   NAMES=rep("",n^2)
@@ -10,7 +10,7 @@ ranking_scaling <- function(X,C=0,remove.full.columns=TRUE){
   for(k in (1:m)){
     for(l1 in (1:n)){
       for(l2 in (1:n)){
-        temp[l1,l2]=((X[k,l1]  <= X[k,l2])  & (X[k,l1] +C >= X[k,l2]) )*1
+        temp[l1,l2]=((X[k,l1]  <= X[k,l2])  )*1
       }
     }
     ans[k,]=as.vector(temp)
@@ -23,7 +23,14 @@ ranking_scaling <- function(X,C=0,remove.full.columns=TRUE){
     }
   }
   colnames(ans)=NAMES
-  if(remove.full.columns){
+  
+  if(complemented){
+    NAMES <- rep("",ncol(ans))
+    for(k in (1:ncol(ans))){NAMES[k]=paste(" NOT(","colnames(ans)[k],") ",collapse="")}
+    ans <- cbind (ans,1-ans)
+    colnames(ans)[-(1:n^2)]=NAMES
+   }
+if(remove.full.columns){
     i=which(colSums(ans)==m)
     ans=ans[,-i]
   }
