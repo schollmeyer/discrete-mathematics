@@ -1909,6 +1909,17 @@ object_dist_mat <- function(context){
  }
 	
 return(ans)}
+
+attribute_dist_mat <- function(context){
+  m <- nrow(context)
+  ans <- array(0,c(m,m))
+  for(k in (1:m)){
+	  for(l in (1:m)){
+		  ans[k,l]=attribute_dist(k,l,context)
+	  }
+ }
+	
+return(ans)}
 		  
 
   
