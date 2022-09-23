@@ -18,7 +18,7 @@ ranking_scaling <- function(X,remove.full.columns=FALSE,complemented=FALSE){
   t=1
   for(l1 in (1:n)){
     for(l2 in (1:n)){
-      NAMES[t]=paste(c(colnames(X)[l1]," <= ",colnames(X)[l2],collapse="")
+      NAMES[t]=paste(c(colnames(X)[l1]," <= ",colnames(X)[l2]),collapse="")
       t=t+1
     }
   }
@@ -26,7 +26,7 @@ ranking_scaling <- function(X,remove.full.columns=FALSE,complemented=FALSE){
   
   if(complemented){
     NAMES <- rep("",ncol(ans))
-    for(k in (1:ncol(ans))){NAMES[k]=paste(" NOT(",colnames(ans)[k],") ",collapse="")}
+    for(k in (1:ncol(ans))){NAMES[k]=paste(c(" NOT(",colnames(ans)[k],") "),collapse="")}
     ans <- cbind (ans,1-ans)
     colnames(ans)[-(1:n^2)]=NAMES
    }
