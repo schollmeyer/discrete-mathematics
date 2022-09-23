@@ -1889,14 +1889,28 @@ return(ans)}
 ########				          ########
 ########################################## 
 
-object.dist=function(i,j,bg){
+object_dist=function(i,j,context){
   m=dim(bg$context)[1]
-  extenti=rep(0,m);extenti[i]=1;extenti=H.obj(extenti,bg)
-  extentj=rep(0,m);extentj[j]=1;extentj=H.obj(extentj,bg)
-  sup=H.obj(pmax(extenti,extentj),bg)
+  extenti=rep(0,m);extenti[i]=1;extenti=operator_closure_obj_input(extenti,context)
+  extentj=rep(0,m);extentj[j]=1;extentj=operator_closure_obj_input(extentj,context)
+  sup=operator_closure_obj_input(pmax(extenti,extentj),context)
   inf=pmin(extenti,extentj)
 return(sum(sup-inf))}
-attribute.dist=function(i,j,bg){object.dist(i,j,bg=list(context=t(bg$context)))}
+
+attribute_dist=function(i,j,context){object_dist(i,j,context)}
+
+object_dist_mat <- function(context){
+  m <- nrow(context)
+  ans <- array(0,c(m,m))
+  for(k in (1:m)){
+	  for(l in (1:m)){
+		  ans[k,l]=object_dist(k,l,context)
+	  }
+ }
+	
+return(ans)}
+		  
+}
   
   
  
