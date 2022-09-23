@@ -100,7 +100,7 @@ all_partial_orders <- function(K,names=(1:K)){
   colnames(X) <- names
   m <- nrow(X)
   
-  context <- ranking_scaling(X,C=K,TRUE)
+  context <- ranking_scaling(X,C=K,FALSE)
   ans <- calculate_concept_lattice(context=context,compute_extents=FALSE)
   ans <- ans$intents[-nrow(ans$intents),]
   colnames(ans) <- colnames(context)
