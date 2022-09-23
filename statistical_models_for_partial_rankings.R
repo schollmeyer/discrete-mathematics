@@ -18,7 +18,7 @@ ranking_scaling <- function(X,remove.full.columns=FALSE,complemented=FALSE){
   t=1
   for(l1 in (1:n)){
     for(l2 in (1:n)){
-      NAMES[t]=paste(c(colnames(X)[l1]," <= ",colnames(X)[l2], "; C=",C),collapse="")
+      NAMES[t]=paste(c(colnames(X)[l1]," <= ",colnames(X)[l2],collapse="")
       t=t+1
     }
   }
@@ -26,7 +26,7 @@ ranking_scaling <- function(X,remove.full.columns=FALSE,complemented=FALSE){
   
   if(complemented){
     NAMES <- rep("",ncol(ans))
-    for(k in (1:ncol(ans))){NAMES[k]=paste(" NOT(","colnames(ans)[k],") ",collapse="")}
+    for(k in (1:ncol(ans))){NAMES[k]=paste(" NOT(",colnames(ans)[k],") ",collapse="")}
     ans <- cbind (ans,1-ans)
     colnames(ans)[-(1:n^2)]=NAMES
    }
@@ -101,13 +101,13 @@ all_quasiorders <- function(number_obj){
   
 }
 
-all_partial_orders <- function(K,names=(1:K)){
+all_partial_orders <- function(K,names=(1:K),complemented){
   
   X <- permutations(K,K)
   colnames(X) <- names
   m <- nrow(X)
   
-  context <- ranking_scaling(X,C=K,FALSE)
+  context <- ranking_scaling(X,C=K,remove.full.columns=FALSE,complemented=complemented)
   ans <- calculate_concept_lattice(context=context,compute_extents=FALSE)
   ans <- ans$intents[-nrow(ans$intents),]
   colnames(ans) <- colnames(context)
