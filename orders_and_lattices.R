@@ -2019,39 +2019,40 @@ cond.print=function(text,step,stepsize){if(stepsize != Inf){if(step %% stepsize 
 ##########################################
 ########			     	      ########
 #######						       #######
-######     Sternfoermige Mengen     ######
+######     starshaped sets     ######
 #######                            #######
 ########				          ########
 ##########################################
-
-
-starshaped.subgroup.discovery=function(Z,u,params=list(Outputflag=0)){#x.train,y.train,x.test,y.test,stylizedBetweenness=sb1,p,VCDim,params=list(outputFlag=0,presolve=0,threads=1),VCcut=TRUE,interval){
-  m=dim(Z)[1]
-  M=list(modelsense="max",obj=u,lb=rep(0,m),ub=rep(1,m))
-  solutions=list()
-  objvals=rep(0,m)
-  stars=array(0,c(m,m))
-  for(k in (1:m)){  ## quant ueber alle sternmittelpunkte
+						     
+						     
+starshaped_subgroup_discovery=  <- function(Z,u,params=list(Outputflag=0)){#x.train,y.train,x.test,y.test,stylizedBetweenness=sb1,p,VCDim,params=list(outputFlag=0,presolve=0,threads=1),VCcut=TRUE,interval){
+  m <- dim(Z)[1]
+  M <- list(modelsense="max",obj=u,lb=rep(0,m),ub=rep(1,m))
+  solutions <- list()
+  objvals <- rep(0,m)
+  stars <- array(0,c(m,m))
+  for(k in (1:m)){  ## quantify over all starcenters
       M <- modelFromQoset(t(Z[k,,]))
-	  M$obj=u
-	  M$lb=rep(0,m)
-	  M$ub=rep(1,m)
+	  M$obj <- u
+	  M$lb <- rep(0,m)
+	  M$ub <-rep(1,m)
       M$lb[k] <- 1              ## Sternmittelpunkt drinnen
-	  M$modelsense="max"
+	  M$modelsense <- "max"
 	  b <- gurobi(M,params=params)
-	  solutions[[k]]=b
-	  objvals[k]=b$objval
-	  stars[k,]=b$x
+	  solutions[[k]] <- b
+	  objvals[k] <- b$objval
+	  stars[k,] <- b$x
 	  
 	  
 	  
   } 
-  i=which.max(objvals) 
+  i <- which.max(objvals) 
 return(list(solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,]))}
   
   
 
-modelFromQoset=function(Q){## erstellt Lineares Programmierungsproblem zur Optimierung ueber alle Oberhalbmengen einer quasigeordneter Menge Q
+modelFromQoset <- function(Q){## constructs linear program for the optimization over all upsets of a quasiordered set Q
+	
   QQ <- tr(Q)
   m  <- sum(QQ)
   n  <- dim(QQ)[1]
