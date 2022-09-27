@@ -11,6 +11,35 @@ library(geometry) ## für Fufnktion cart2bar (für Erstellung Kontext für Geome
 source("statistical_models_for_partial_rankings.R",local=TRUE)
 source("fca_implications_general.R",local=TRUE)
 
+
+
+###################################
+###################################
+###### Convertion of Data Structures
+
+
+list_to_context <- function(list){        #### converts a list of orders given by incidence relations as 0-1 matrices into a context of crosses
+	m <- length(list)
+	mat <- array(0,c(m, dim(list[[1]])
+        
+	for(k in (1:m)){
+		mat[k,] <- as.vector(list[[k]]
+	}
+retuen(mat)				     
+	
+}
+context_to_list <- function(context){
+	m <- nrow(context)
+	q <- sqrt(ncol(context))
+	for(k in (1:q)){NAMES[k] <- colnames(context[1,k)[1]
+	list <- list()
+	for(k in (1:m)){
+		temp <- context[k,];dim(k) <- c(q,q)
+		colnames(temp) <- rownames(temp) <- NAMES
+		list[[k]] <- temp
+	}
+				     
+return(list)}
 ###################################
 ########				   ########
 #######						#######
