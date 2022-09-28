@@ -2259,7 +2259,7 @@ sb1=function(XR,p){
 
 
 
-
+# certain depth functions:
 
 
 
@@ -2295,3 +2295,50 @@ star_depth2 <- function(context, index_modus){ ## computes a another simple dept
    }
 return(ans)
 }
+						     
+						     
+# properties of depth functions	
+						     
+is_quasiconcave <- function(depths, context){
+	
+	m <- nrow(context)
+	for(k in (1:m)){
+		i <- which(depths > depths[k])
+		extent <- rep(0,m);extent[i] <- 1
+		if(operator_closure_obj_input(extent,context)[k]==1){return(FALSE)}
+	}
+return(TRUE)
+	
+}
+						     
+				
+is_strictly_quasiconcave <- function(depths, context){
+	
+	m <- nrow(context)
+	for(k in (1:m)){
+		i <- which(depths >= depths[k])
+		i[k] <- 0
+		extent <- rep(0,m);extent[i] <- 1
+		if(operator_closure_obj_input(extent,context)[k]==1){return(FALSE)}
+	}
+return(TRUE)
+	
+}
+						     
+strictly_quasiconcave_pseudohull <- function(depths, context){
+	
+	m <- nrow(context)
+	ans <- depths
+	for(k in (1:m)){
+		i <- which(depths >= depths[k])
+		i[k] <- 0
+		extent <- rep(0,m);extent[i] <- 1
+		if(operator_closure_obj_input(extent,context)[k]==1){ans[k] <- ans[k]+1/100/m}
+	}
+return(ans)
+	
+}	
+						     
+
+						     
+						     
