@@ -946,7 +946,7 @@ min_k_attr_generated=function(extent,intent,X){  # Berecchnet für Begriff gegeb
   return(model)}
 
 
-min_k_obj_generated=function(extent,intent,X){min_k.attr_generated(intent,extent,t(X))} # Berecchnet für Begriff gegeben durch Umfang extent und Inhalt intent das maximale k, für das der Begriff k-MGegenstandserzeugt ist (Kontext X muss ebenfalls mit übergeben werden)
+min_k_obj_generated=function(extent,intent,X){min_k_attr_generated(intent,extent,t(X))} # Berecchnet für Begriff gegeben durch Umfang extent und Inhalt intent das maximale k, für das der Begriff k-MGegenstandserzeugt ist (Kontext X muss ebenfalls mit übergeben werden)
   
   
  
