@@ -2390,10 +2390,10 @@ Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that pa
     i <- sample(rep(i,2),size=1)	
     ans_new <- ans_old
     ans_new[i] <- 1
-    if(! is_extendable_to_partial_order(w_old)){
+    if(! is_extendable_to_partial_order(ans_new)){
 	ans_old <<- ans_old
 	ans_new <<- ans_new
-	return(ans_old)}
+	return(w_old)}
 	M1 <- ans_new[,(1:q)]
 	diag(M1) <- 1
 	M1 <- relation_incidence(transitive_closure(as.relation(M1)))
