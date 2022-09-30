@@ -2377,7 +2377,7 @@ Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that pa
  q <- nrow(orders1[[1]])
  W <- pmax(Reduce('+',orders1), Reduce('+',orders2))
 	W <<- W
- ans_old <- ans_new <- orders[[1]]*0#array(0,dim(orders[[1]]))
+ ans_old <- ans_new <- orders1[[1]]*0#array(0,dim(orders[[1]]))
  w  <- max(W[which(ans_old==0)])
  while(TRUE){
 	 w <<- w
