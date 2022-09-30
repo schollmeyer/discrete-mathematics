@@ -2375,13 +2375,20 @@ Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that pa
 	
  m <- length(orders1)
  q <- nrow(orders1[[1]])
- W <- pmax(Reduce('+',orders1), Reduce('+',orders2))
-	W <<- W
+ W1 <- Reduce('+',orders1)
+ W2 <-  Reduce('+',orders2))
+ W <- pmax(W1,W2)
+	
+	
+ W <<- W
  ans_old <- ans_new <- orders1[[1]]*0#array(0,dim(orders[[1]]))
  w  <- max(W[which(ans_old==0)])
+ i <- which(ans_old==0 & W==w)
+ i <- sample(rep(i,2),size=1)
  while(TRUE){
 	 w <<- w
     w_old <- w
+	 i_old <- i
     w <- max(W[which(ans_old==0)])
 	 ans_old <<- ans_old
 	 w <<- w
@@ -2393,7 +2400,7 @@ Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that pa
     if(! is_extendable_to_partial_order(ans_new)){
 	ans_old <<- ans_old
 	ans_new <<- ans_new
-	return(w_old)}
+	return(W[i_old]/(W1[i_old]+W2[i_old])}
 	M1 <- ans_new[,(1:q)]
 	diag(M1) <- 1
 	M1 <- relation_incidence(transitive_closure(as.relation(M1)))
