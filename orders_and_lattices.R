@@ -10,6 +10,7 @@ library(geometry) ## für Fufnktion cart2bar (für Erstellung Kontext für Geome
 
 source("statistical_models_for_partial_rankings.R",local=TRUE)
 source("fca_implications_general.R",local=TRUE)
+source("fca_ufg_partial_order.R",local=TRUE)
 
 
 
