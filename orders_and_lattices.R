@@ -23,7 +23,7 @@ list_to_context <- function(list){        #### converts a list of orders given b
 	mat <- array(0,c(m, dim(list[[1]])))
         
 	for(k in (1:m)){
-		mat[k,] <- as.vector(list[[k]]
+		mat[k,] <- as.vector(list[[k]])
 	}
 retuen(mat)				     
 	
