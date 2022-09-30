@@ -2351,7 +2351,8 @@ Tukeys_true_median_order <- function(orders){   ## coputes that partial order in
  m <- length(orders)
  q <- nrow(orders[[1]])
  W=Reduce('+',orders)
- ans_old <- ans_new <- array(0,dim(orders[[1]]))
+ ans_old <- ans_new <- orders[[1]]*0#array(0,dim(orders[[1]]))
+ 
  while(TRUE){
     w <- max(W[which(ans_old==0)])
     i <- which(ans_old==0 & W==w)
