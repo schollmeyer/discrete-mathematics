@@ -2373,8 +2373,8 @@ Tukeys_true_median_order <- function(orders){   ## coputes that partial order in
 
 Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that partial order in the space of ALL partial orders that has the maximal tukeys depth wr.t. the given data cloud representet by th given contetxt (given in the form of a list of posets, where every etry of the list is an incidence relation apposited with its negation (In terms of conceptual scaling we use here the complemented scaling
 	
- m <- length(orders)
- q <- nrow(orders[[1]])
+ m <- length(orders1)
+ q <- nrow(orders1[[1]])
  W <- pmax(Reduce('+',orders1), Reduce('+',orders2))
 	W <<- W
  ans_old <- ans_new <- orders[[1]]*0#array(0,dim(orders[[1]]))
