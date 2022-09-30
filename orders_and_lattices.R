@@ -2371,6 +2371,34 @@ Tukeys_true_median_order <- function(orders){   ## coputes that partial order in
     }
 }
 
+Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that partial order in the space of ALL partial orders that has the maximal tukeys depth wr.t. the given data cloud representet by th given contetxt (given in the form of a list of posets, where every etry of the list is an incidence relation apposited with its negation (In terms of conceptual scaling we use here the complemented scaling
+	
+ m <- length(orders)
+ q <- nrow(orders[[1]])
+ W=pmax(Reduce('+',orders1), Reduce('+',orders2))
+ ans_old <- ans_new <- orders[[1]]*0#array(0,dim(orders[[1]]))
+ w  <- max(W[which(ans_old==0)])
+ while(TRUE){
+    w_old <- w
+    w <- max(W[which(ans_old==0)])
+    i <- which(ans_old==0 & W==w)
+    i <- sample(rep(i,2),size=1)	
+    ans_new <- ans_old
+    ans_new[i] <- 1
+    if(! is_extendable_to_partial_order(w_old)){
+	ans_old <<- ans_old
+	ans_new <<- ans_new
+	return(ans_old)}
+	M1 <- ans_new[,(1:q)]
+	diag(M1) <- 1
+	M1 <- relation_incidence(transitive_closure(as.relation(M1)))
+	M2 <- ans_new[,-(1:q)]	
+        ans_old <- cbind(M1,M2)#relation_incidence(transitive_closure(as.relation(ans_new[,(1:q)]))),ans_new[,-(1:q)])
+	w_new <- w
+    }
+}
+
+
 
 is_extendable_to_partial_order <- function( complemented_order ){
 
