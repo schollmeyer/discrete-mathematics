@@ -2447,11 +2447,13 @@ test_Tukeys_true_median_order <- function(){
 	a <- cbind(a,1-a)
 	ans1 <- Tukeys_true_median_order(orders[i])
 	TD <- Tukeys_depth(rbind(a[i,],a),weights=c(rep(1,length(i)),rep(0,m)))
-	j <- which.max(TD)
-	print(which(TD==max(TD)))
+	j <- which(TD==max(TD))
+	for(jj in j){
 	ans2 <- (rbind(a[i,],a))[j,];dim(ans2) <- c(q,2*q)
 	ans1 <<- ans1
 	ans2 <<- ans2
-	return(all(ans1== ans2 ))
+	if(all(ans1==ans2)){return(TRUE)}
+	}	
+	return(FALSE)
 }
 	
