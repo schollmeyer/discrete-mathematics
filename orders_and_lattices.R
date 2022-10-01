@@ -21,7 +21,7 @@ source("fca_ufg_partial_order.R",local=TRUE)
 
 list_to_context <- function(list){        #### converts a list of orders given by incidence relations as 0-1 matrices into a context of crosses
 	m <- length(list)
-	mat <- array(0,c(m, dim(list[[1]])))
+	mat <- array(0,c(m, length(list[[1]])))
         
 	for(k in (1:m)){
 		mat[k,] <- as.vector(list[[k]])
