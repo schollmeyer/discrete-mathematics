@@ -2418,7 +2418,7 @@ Tukeys_geodetic_median_order <- function(corders, proportion){
 	extent <- rep(0, length(corders))
 	intent <- calculate_psi(extent, context)
 	dim(intent) <- dim(corders[[1]])
-	return(Tukeys_true_median_order(orders=corders,startorder = intent)
+	return(Tukeys_true_median_order(orders=corders,startorder = intent))
 
 	
 	
