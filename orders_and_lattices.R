@@ -26,7 +26,7 @@ list_to_context <- function(list){        #### converts a list of orders given b
 	for(k in (1:m)){
 		mat[k,] <- as.vector(list[[k]])
 	}
-retuen(mat)				     
+return(mat)				     
 	
 }
 context_to_list <- function(context){
