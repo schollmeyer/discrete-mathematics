@@ -2346,12 +2346,12 @@ return(ans)
 ### depth functions in the context of poset-data
 						     
 						     
-Tukeys_true_median_order <- function(orders){   ## coputes that partial order in the space of ALL partial orders that has the maximal tukeys depth wr.t. the given data cloud representet by th given contetxt (given in the form of a list of posets, where every etry of the list is an incidence relation apposited with its negation (In terms of conceptual scaling we use here the complemented scaling
+Tukeys_true_median_order <- function(orders,startorder=orders[[1]]*0){   ## coputes that partial order in the space of ALL partial orders that has the maximal tukeys depth wr.t. the given data cloud representet by th given contetxt (given in the form of a list of posets, where every etry of the list is an incidence relation apposited with its negation (In terms of conceptual scaling we use here the complemented scaling
 	
  m <- length(orders)
  q <- nrow(orders[[1]])
  W=Reduce('+',orders)
- ans_old <- ans_new <- orders[[1]]*0#array(0,dim(orders[[1]]))
+ ans_old <- ans_new <- startorder#orders[[1]]*0#array(0,dim(orders[[1]]))
  
  while(TRUE){
     w <- max(W[which(ans_old==0)])
@@ -2411,7 +2411,18 @@ Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that pa
     }
 }
 
+Tukeys_geodetic_median_order <- function(corders, proportion){
+	context <- list_to_context(corders)
+	TD <- Tukeys_depth(corders)
+	i <- which(TD>=quantile(TD,1-proportion)
+	extente <- rep(0, length(corders)
+	intent <- calculate_psi(extent, context)
+	dim(intent) <- dim(corders[[1]]
+	return(Tukeys_true_median_order(orders=corders,startorder = intent)
 
+	
+	
+}
 
 is_extendable_to_partial_order <- function( complemented_order ){
 
