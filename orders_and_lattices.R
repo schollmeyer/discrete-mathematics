@@ -2362,8 +2362,9 @@ Tukeys_true_median_order <- function(orders,startorder=orders[[1]]*0){   ## copu
     if(! is_extendable_to_partial_order(ans_new)){
 	ans_old <<- ans_old
 	ans_new <<- ans_new
-	
-	return(cbind(ans_old[,(1:q)],1-ans_old[,(1_q)]))}
+	return(ans_old)}
+	 
+	#return(cbind(ans_old[,(1:q)],1-ans_old[,(1_q)]))}
 	M1 <- ans_new[,(1:q)]
 	diag(M1) <- 1
 	M1 <- relation_incidence(transitive_closure(as.relation(M1)))
@@ -2437,12 +2438,12 @@ is_extendable_to_partial_order <- function( complemented_order ){
 return(TRUE)}
 						  
 test_Tukeys_true_median_order <- function(){
-	q <- 5
+	q <- 4
 	a <- all_partial_orders(q,complemented=FALSE)
 	orders <- list()
 	m <- nrow(a)
 	for(k in (1:m)){temp <- a[k,];dim(temp) <- c(q,q);orders[[k]] <- cbind(temp,1-temp)}
-	i <- sample((1:m),size=2000)
+	i <- sample((1:m),size=6)
 	a <- cbind(a,1-a)
 	ans1 <- Tukeys_true_median_order(orders[i])
 	TD <- Tukeys_depth(rbind(a[i,],a),weights=c(rep(1,length(i)),rep(0,m)))
