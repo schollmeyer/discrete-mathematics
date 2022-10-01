@@ -2413,7 +2413,7 @@ Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that pa
 
 Tukeys_geodetic_median_order <- function(corders, proportion){
 	context <- list_to_context(corders)
-	TD <- Tukeys_depth(corders)
+	TD <- Tukeys_depth(context)
 	i <- which(TD>=quantile(TD,1-proportion))
 	extent <- rep(0, length(corders))
 	intent <- calculate_psi(extent, context)
