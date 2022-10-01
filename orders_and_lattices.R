@@ -2364,7 +2364,7 @@ Tukeys_true_median_order <- function(orders,startorder=orders[[1]]*0){   ## copu
 	ans_new <<- ans_new
 	#return(ans_old)}
 	 
-	return(cbind(ans_old[,(1:q)],1-ans_old[,(1_q)]))}
+	return(cbind(ans_old[,(1:q)],1-ans_old[,(1:q)]))}
 	M1 <- ans_new[,(1:q)]
 	diag(M1) <- 1
 	M1 <- relation_incidence(transitive_closure(as.relation(M1)))
