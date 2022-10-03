@@ -2413,7 +2413,7 @@ Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that pa
     }
 }
 
-Tukeys_geodetic_median_order <- function(corders, proportion,auto=FALSE){
+Tukeys_geodetic_median_order <- function(corders, proportion,auto=FALSE,fraction=0.75){
 	context <- list_to_context(corders)
 	TD <- Tukeys_depth(context)
 	if(auto){
@@ -2423,7 +2423,7 @@ Tukeys_geodetic_median_order <- function(corders, proportion,auto=FALSE){
 			extent <- rep(0,ncol(context))
 			extent[which(TD>=OTD[k])]=1
 			intent <- calculate_psi(extent,context)
-			if(all(intent<=TM)){proportion=k/length(corders);print(proportion);break}
+			if(all(intent<=TM)){proportion=k/length(corders)*fraction;break}
 		}
 	}
 	
