@@ -2419,7 +2419,7 @@ Tukeys_geodetic_median_order <- function(corders, proportion,auto=FALSE){
 	if(auto){
 		TM <- as.vector(Tukeys_true_median_order(corders))
 		OTD <- sort(TD,decreasing=TRUE)
-		for(k in (1:length(corders)){
+		for(k in (1:length(corders)){)
 			extent <- rep(0,ncol(context))
 			extent[which(TD>=OTD[k])]=1
 			intent <- calculate_psi(extent,context)
