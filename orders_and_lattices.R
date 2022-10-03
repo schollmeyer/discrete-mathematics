@@ -44,7 +44,7 @@ return(list)}
 ###################################
 ########				   ########
 #######						#######
-######     Ordnungstheorie   ######
+######     order theory  ######
 #######                     #######
 ########				   ########
 ###################################
@@ -150,7 +150,7 @@ downarrow=function(x,bg){ # berechnet Menge aller Elemente unterhalb einer gegeb
 ##########################################
 ########			     	      ########
 #######						       #######
-######     Formale Begriffsanalyse  ######
+######     Fomal Concept Analysis    ######
 #######                            #######
 ########				          ########
 ##########################################
@@ -307,7 +307,7 @@ random_context=function(nrow=20,ncol=10,prob=0.5){matrix(runif(nrow*ncol)<=prob,
 ##########################################
 ########			     	      ########
 #######						       #######
-######     Begriffliches Skalieren  ######
+######     Conceptual Scaling   ######
 #######                            #######
 ########				          ########
 ##########################################
@@ -475,7 +475,7 @@ return(list(class=class,K=K,dim=sum(K),NAMES=NAMES))}
 ##########################################
 ########			     	      ########
 #######						       #######
-##### Optimierung auf Hüllensystemen #####
+##### Optimization on Closure Systems  #####
 #######                            #######
 ########				          ########
 ##########################################
@@ -1127,7 +1127,7 @@ subgroup_discovery_fca_milp=function(dat,target,target.class,nrep,heuristic,remo
 	 #ans$A=rbind(ans$A,matrix(T,nrow=1))
 	 #ans$rhs=c(ans$rhs,-CUT)
 	 #ans$sense=c(ans$sense,"<=")
-	 ans$start=c(temp$solution,PSI(temp$solution,list(context=X)))
+	 ans$start=c(temp$solution,PSI(temp$solution,context=X))
 	 ans$context=X
 	 ans$NAMES=conceptual.scaling.dim(XX)$NAMES
 	 #TEMP=heuristic.implications(X,v,NREP)
