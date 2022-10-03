@@ -2432,6 +2432,8 @@ Tukeys_geodetic_median_order <- function(corders, proportion,auto=FALSE,fraction
 	extent[i] <- 1
 	intent <- calculate_psi(extent, context)
 	dim(intent) <- dim(corders[[1]])
+	colnames(intent) <- colnames(corders[[1]])
+	rownames(intent) <- rownames(corders[[1]])
 	return(Tukeys_true_median_order(orders=corders,startorder = intent))
 
 	
