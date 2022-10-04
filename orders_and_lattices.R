@@ -29,14 +29,16 @@ list_to_context <- function(list){        #### converts a list of orders given b
 return(mat)				     
 	
 }
-context_to_list <- function(context){
+context_to_list <- function(context,complemented=FALSE){
 	m <- nrow(context)
 	q <- sqrt(ncol(context))
+	q2=q
+	if(complemented){q2 <- 2*q}
 	for(k in (1:q)){NAMES[k] <- colnames(context[1,k])}
 	list <- list()
 	for(k in (1:m)){
-		temp <- context[k,];dim(k) <- c(q,q)
-		colnames(temp) <- rownames(temp) <- NAMES
+		temp <- context[k,];dim(k) <- c(q,q2)
+		#colnames(temp) <- rownames(temp) <- NAMES
 		list[[k]] <- temp
 	}
 				     
