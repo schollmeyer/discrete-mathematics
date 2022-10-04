@@ -31,7 +31,7 @@ return(mat)
 }
 context_to_list <- function(context,complemented=FALSE){
 	m <- nrow(context)
-	q <- sqrt(ncol(context))
+	q <- sqrt(ncol(context)/2)
 	q2=q
 	if(complemented){q2 <- 2*q}
 	#for(k in (1:q)){NAMES[k] <- colnames(context[1,k])}
