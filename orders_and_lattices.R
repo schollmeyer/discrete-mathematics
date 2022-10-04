@@ -37,7 +37,7 @@ context_to_list <- function(context,complemented=FALSE){
 	#for(k in (1:q)){NAMES[k] <- colnames(context[1,k])}
 	list <- list()
 	for(k in (1:m)){
-		temp <- context[k,];dim(k) <- c(q,q2)
+		temp <- context[k,];dim(temp) <- c(q,q2)
 		#colnames(temp) <- rownames(temp) <- NAMES
 		list[[k]] <- temp
 	}
