@@ -34,7 +34,7 @@ context_to_list <- function(context,complemented=FALSE){
 	q <- sqrt(ncol(context))
 	q2=q
 	if(complemented){q2 <- 2*q}
-	for(k in (1:q)){NAMES[k] <- colnames(context[1,k])}
+	#for(k in (1:q)){NAMES[k] <- colnames(context[1,k])}
 	list <- list()
 	for(k in (1:m)){
 		temp <- context[k,];dim(k) <- c(q,q2)
