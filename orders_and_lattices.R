@@ -2026,8 +2026,7 @@ cond.print=function(text,step,stepsize){if(stepsize != Inf){if(step %% stepsize 
 #######                            #######
 ########				          ########
 ##########################################
-TT
-test						     
+					     
 						     
 starshaped_subgroup_discovery  <- function(Z,u,params=list(Outputflag=0)){#x.train,y.train,x.test,y.test,stylizedBetweenness=sb1,p,VCDim,params=list(outputFlag=0,presolve=0,threads=1),VCcut=TRUE,interval){
   m <- dim(Z)[1]
