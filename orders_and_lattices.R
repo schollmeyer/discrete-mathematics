@@ -3,7 +3,7 @@
 library(Matrix)
 library(gurobi)
 library(igraph)  
-library(Biobase) ##für Funktion rowMin
+#library(Biobase) ##für Funktion rowMin
 library(geometry) ## für Fufnktion cart2bar (für Erstellung Kontext für Geometrie)
 
 
@@ -113,7 +113,7 @@ return(ans[p,p])}
 
 
 
-width.hopcroft.karp=function(II){  ## berechnet Weite einer geordneten Menge über eine  maximume Matching in einem bipartiten Graph formulierung und den Hopcroft-Karp Algorithmus
+width_hopcroft_karp=function(II){  ## berechnet Weite einer geordneten Menge über eine  maximume Matching in einem bipartiten Graph formulierung und den Hopcroft-Karp Algorithmus
 
 ## siehe https://mathoverflow.net/questions/189161/fastest-algorithm-to-compute-the-width-of-a-poset
   if(is.null(II)){return(list(width=0))}
@@ -2028,14 +2028,117 @@ cond.print=function(text,step,stepsize){if(stepsize != Inf){if(step %% stepsize 
 ##########################################
 					     
 						     
-starshaped_subgroup_discovery  <- function(Z,u,params=list(Outputflag=0)){#x.train,y.train,x.test,y.test,stylizedBetweenness=sb1,p,VCDim,params=list(outputFlag=0,presolve=0,threads=1),VCcut=TRUE,interval){
+
+
+U <- function(I){index=!duplicated(I)&!duplicated(t(I));return(I[index,index])}
+
+
+stylized_betweeness <- function(g,h,i,context, attribute_weights){
+  
+  common_attributes <- which(g==1 & i==1)
+  if(length(common_attributes)==0){return(1)}
+  ans <- 1-max((1-h[common_attributes])*attribute_weights[common_attributes])
+  return(ans)
+  
+}
+
+
+
+incidence_cut=function(I,width,interval=quantile(unique(as.vector(I)),c(0.01,0.95))){
+  
+  interval <<- interval
+  f=function(C,I){W=width_hopcroft_karp(U(compute_transitive_hull(I >=C)))$width;return(W-width)}
+  #print(interval)
+  #interval[1]=0
+  ans=uniroot(f,interval=interval,I=I)
+  #print(ans$root)
+  #print(max(I))
+  #print(dim(I>=ans$root))
+  #MM <<- I>=ans$root
+  #print(ans$root)
+  return(transitive.hull(I>=ans$root))}
+
+
+
+
+
+
+
+
+starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0)){
+  m <- dim(Z)[1]
+  M <- list(modelsense="max",obj=u,lb=rep(0,m),ub=rep(1,m))
+  solutions <- list()
+  objvals <- rep(0,m)
+  stars <- array(0,c(m,m))
+  
+  models=list()
+  for(k in (1:m)){  ## quantify over all starcenters
+    I <<- Z[k,,]
+    I <- incidence_cut(Z[k,,],vc_dim)
+    
+    
+    M <- modelFromQoset(t(I))# Z[k,,]))
+    M$obj <- u
+    M$lb <- rep(0,m)
+    M$ub <-rep(1,m)
+    M$lb[k] <- 1              ## Sternmittelpunkt drinnen
+    M$modelsense <- "max"
+    b <- gurobi(M,params=params)
+    solutions[[k]] <- b
+    objvals[k] <- b$objval
+    stars[k,] <- b$x
+    
+    models[[k]] =M
+    
+  } 
+  i <- which.max(objvals) 
+  
+  
+  I <<- Z[i,,]
+  I <- incidence_cut(Z[i,,],vc_dim)
+  
+  
+  M <- modelFromQoset(t(I))# Z[k,,]))
+  M$obj <- u
+  M$lb <- rep(0,m)
+  M$ub <-rep(1,m)
+  M$lb[k] <- 1              ## Sternmittelpunkt drinnen
+  M$modelsense <- "max"
+  b <- gurobi(M,params=params)
+  #solutions[[k]] <- b
+  #objvals[k] <- b$objval
+  #stars[k,] <- b$x
+  
+  
+  return(list(models=models,obj=u,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,I_fuzzy=Z[i,,] , I = incidence_cut(Z[i,,],vc_dim) ,model=M) )}
+
+
+
+
+
+starshaped_subgroup_discovery_h0 <- function(models){
+  
+  v <- sample(models[[1]]$obj)
+  
+  ans <- -Inf
+  for(k in (1: length(models))){
+    M <- models[[k]]
+    M$obj <- v
+    ans <- max(ans,gurobi(M)$objval)
+  }
+  
+  return(ans)}
+
+
+starshaped_subgroup_discovery_old  <- function(Z,u,params=list(Outputflag=0)){#x.train,y.train,x.test,y.test,stylizedBetweenness=sb1,p,VCDim,params=list(outputFlag=0,presolve=0,threads=1),VCcut=TRUE,interval){
   m <- dim(Z)[1]
   M <- list(modelsense="max",obj=u,lb=rep(0,m),ub=rep(1,m))
   solutions <- list()
   objvals <- rep(0,m)
   stars <- array(0,c(m,m))
   for(k in (1:m)){  ## quantify over all starcenters
-      M <- modelFromQoset(t(Z[k,,]))
+    M <- modelFromQoset(t(Z[k,,]))
 	  M$obj <- u
 	  M$lb <- rep(0,m)
 	  M$ub <-rep(1,m)
@@ -2050,7 +2153,7 @@ starshaped_subgroup_discovery  <- function(Z,u,params=list(Outputflag=0)){#x.tra
 	  
   } 
   i <- which.max(objvals) 
-return(list(solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,]))}
+return(list(obj=u,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i))}
   
   
 
