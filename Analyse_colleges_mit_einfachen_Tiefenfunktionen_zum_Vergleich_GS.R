@@ -166,6 +166,7 @@ X<- cemspc[which_po_without_nas,c(16,17)]
 orders <- data_set_without_nas
 complemented_orders <- list()
 
+
 for(k in (1:length(orders))){
 
 colnames(orders[[k]]) <- rownames(orders[[k]]) <- c("London", "Paris", "Milano", "St. Gallen", "Barcelona", "Stockholm")
