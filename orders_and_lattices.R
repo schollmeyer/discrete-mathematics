@@ -970,6 +970,10 @@ min_k_obj_generated=function(extent,intent,X){min_k_attr_generated(intent,extent
 ##########################################
 
 
+compute_objective <- function(dat,target,target_class){
+v <- (dat[[target]]==target_class)-(dat[[target]]!=target_class)*mean(dat[[target]]==target_class)/mean(dat[[target]]!=target_class)
+return(v)}
+
 
 
 col.reduce=function(X){   ##doppelt???
@@ -2020,18 +2024,26 @@ cond.print=function(text,step,stepsize){if(stepsize != Inf){if(step %% stepsize 
 
 
 ##########################################
-########			     	      ########
-#######						       #######
-######     starshaped sets     ######
+########			     	              ########
+#######						                 #######
+######     starshaped sets          ######
 #######                            #######
-########				          ########
+########				                  ########
 ##########################################
 					     
 						     
 
 
-U <- function(I){index=!duplicated(I)&!duplicated(t(I));return(I[index,index])}
 
+
+
+
+U <- function(I){
+  
+  #computes quotient order from a quasiorder
+index <- !duplicated(I)&!duplicated(t(I));return(I[index,index])}
+
+compute_quotient_order <- U
 
 stylized_betweeness <- function(g,h,i,context, attribute_weights){
   
@@ -2045,18 +2057,10 @@ stylized_betweeness <- function(g,h,i,context, attribute_weights){
 
 
 incidence_cut=function(I,width,interval=quantile(unique(as.vector(I)),c(0.01,0.95))){
-  
-  interval <<- interval
-  f=function(C,I){W=width_hopcroft_karp(U(compute_transitive_hull(I >=C)))$width;return(W-width)}
-  #print(interval)
-  #interval[1]=0
-  ans=uniroot(f,interval=interval,I=I)
-  #print(ans$root)
-  #print(max(I))
-  #print(dim(I>=ans$root))
-  #MM <<- I>=ans$root
-  #print(ans$root)
-  return(transitive.hull(I>=ans$root))}
+    #interval <<- interval
+  f <- function(C,I){W=width_hopcroft_karp(compute_quotient_order(compute_transitive_hull(I >=C)))$width;return(W-width)}
+    ans <- uniroot(f,interval=interval,I=I)
+return(compute_transitive_hull(I>=ans$root))}
 
 
 
@@ -2066,24 +2070,24 @@ incidence_cut=function(I,width,interval=quantile(unique(as.vector(I)),c(0.01,0.9
 
 
 starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0)){
-  m <- dim(Z)[1]
-  M <- list(modelsense="max",obj=u,lb=rep(0,m),ub=rep(1,m))
+  m <- nrow(Z)
+  model <- list(modelsense="max",obj=u,lb=rep(0,m),ub=rep(1,m))
   solutions <- list()
   objvals <- rep(0,m)
   stars <- array(0,c(m,m))
   
   models=list()
   for(k in (1:m)){  ## quantify over all starcenters
-    I <<- Z[k,,]
+    #I <<- Z[k,,]
     I <- incidence_cut(Z[k,,],vc_dim)
     
     
-    M <- modelFromQoset(t(I))# Z[k,,]))
-    M$obj <- u
-    M$lb <- rep(0,m)
-    M$ub <-rep(1,m)
-    M$lb[k] <- 1              ## Sternmittelpunkt drinnen
-    M$modelsense <- "max"
+    model <- model_from_qoset(t(I))# Z[k,,]))
+    model$obj <- u
+    model$lb <- rep(0,m)
+    model$ub <-rep(1,m)
+    model$lb[k] <- 1              ## Sternmittelpunkt drinnen
+    model$modelsense <- "max"
     b <- gurobi(M,params=params)
     solutions[[k]] <- b
     objvals[k] <- b$objval
@@ -2099,19 +2103,19 @@ starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0))
   I <- incidence_cut(Z[i,,],vc_dim)
   
   
-  M <- modelFromQoset(t(I))# Z[k,,]))
-  M$obj <- u
-  M$lb <- rep(0,m)
-  M$ub <-rep(1,m)
-  M$lb[k] <- 1              ## Sternmittelpunkt drinnen
-  M$modelsense <- "max"
+  model <- model_from_qoset(t(I))# Z[k,,]))
+  model$obj <- u
+  model$lb <- rep(0,m)
+  model$ub <-rep(1,m)
+  model$lb[k] <- 1              ## Sternmittelpunkt drinnen
+  model$modelsense <- "max"
   b <- gurobi(M,params=params)
   #solutions[[k]] <- b
   #objvals[k] <- b$objval
   #stars[k,] <- b$x
   
   
-  return(list(models=models,obj=u,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,I_fuzzy=Z[i,,] , I = incidence_cut(Z[i,,],vc_dim) ,model=M) )}
+  return(list(models=models,obj=u,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,I_fuzzy=Z[i,,] , I = incidence_cut(Z[i,,],vc_dim) ,model=model) )}
 
 
 
@@ -2138,7 +2142,7 @@ starshaped_subgroup_discovery_old  <- function(Z,u,params=list(Outputflag=0)){#x
   objvals <- rep(0,m)
   stars <- array(0,c(m,m))
   for(k in (1:m)){  ## quantify over all starcenters
-    M <- modelFromQoset(t(Z[k,,]))
+    M <- model_from_qoset(t(Z[k,,]))
 	  M$obj <- u
 	  M$lb <- rep(0,m)
 	  M$ub <-rep(1,m)
@@ -2157,7 +2161,7 @@ return(list(obj=u,solutions=solutions,objvals=objvals,stars=stars,objval=objvals
   
   
 
-modelFromQoset <- function(Q){## constructs linear program for the optimization over all upsets of a quasiordered set Q
+model_from_qoset <- function(Q){## constructs linear program for the optimization over all upsets of a quasiordered set Q
 	
   QQ <- tr(Q)
   m  <- sum(QQ)
@@ -2246,7 +2250,7 @@ Print(table(VCDIMS))
     index <- c((1:m.train), ind+m.train)
     #print(Sys.time())
     for(k in (1:m.train)){  ## quant ueber alle sternmittelpunkte## hier auch m moeglich
-      M <- modelFromQoset(II[k,index,index])
+      M <- model_from_qoset(II[k,index,index])
       M$lb[k] <- 1              ## Sternmittelpunkt drinnen
   
   #1
