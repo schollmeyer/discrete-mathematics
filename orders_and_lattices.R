@@ -2079,7 +2079,9 @@ starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0))
   models=list()
   for(k in (1:m)){  ## quantify over all starcenters
     #I <<- Z[k,,]
-    I <- incidence_cut(Z[k,,],vc_dim)
+    
+    if (vc_dim == Inf) { I <- (Z[k,,] >= max(Z[k,,]))*1}
+    else{ I <- incidence_cut(Z[k,,],vc_dim) }
     
     
     model <- model_from_qoset(t(I))# Z[k,,]))
@@ -2088,19 +2090,19 @@ starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0))
     model$ub <-rep(1,m)
     model$lb[k] <- 1              ## Sternmittelpunkt drinnen
     model$modelsense <- "max"
-    b <- gurobi(M,params=params)
+    b <- gurobi(model,params=params)
     solutions[[k]] <- b
     objvals[k] <- b$objval
     stars[k,] <- b$x
     
-    models[[k]] =M
+    models[[k]] =model
     
   } 
   i <- which.max(objvals) 
   
   
   I <<- Z[i,,]
-  I <- incidence_cut(Z[i,,],vc_dim)
+  #I <- incidence_cut(Z[i,,],vc_dim)
   
   
   model <- model_from_qoset(t(I))# Z[k,,]))
@@ -2109,13 +2111,13 @@ starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0))
   model$ub <-rep(1,m)
   model$lb[k] <- 1              ## Sternmittelpunkt drinnen
   model$modelsense <- "max"
-  b <- gurobi(M,params=params)
+  b <- gurobi(model,params=params)
   #solutions[[k]] <- b
   #objvals[k] <- b$objval
   #stars[k,] <- b$x
+  #I <- incidence_cut(Z[i,,],vc_dim)
   
-  
-  return(list(models=models,obj=u,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,I_fuzzy=Z[i,,] , I = incidence_cut(Z[i,,],vc_dim) ,model=model) )}
+  return(list(models=models,obj=u,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,I_fuzzy=Z[i,,] , I = I,model=model) )}
 
 
 
