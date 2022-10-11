@@ -2097,6 +2097,7 @@ starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0))
     
     models[[k]] =model
     
+    
   } 
   i <- which.max(objvals) 
   
