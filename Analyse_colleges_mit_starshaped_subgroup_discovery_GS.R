@@ -7,12 +7,14 @@ context <- list_to_context(corders)
 
 Z <- array(0,rep(length(corders),3))
 
-for(k in (1:dim(Z)[1])){
+
+attribute_weights=colMeans(context)
+for(k in (463:dim(Z)[1])){
   for(l in (1:dim(Z)[1])){
     for(m in (1:dim(Z)[1])){
       
       
-      Z[k,l,m] <- stylized_betweeness(context[k,],context[l,],context[m,],context,attribute_weights=colMeans(context)) #between(corders[[k]],corders[[l]],corders[[m]])
+      Z[k,l,m] <- stylized_betweeness(context[k,],context[l,],context[m,],context,attribute_weights=attribute_weights) #between(corders[[k]],corders[[l]],corders[[m]])
       #print(Z[k,l,m])
     }
   }

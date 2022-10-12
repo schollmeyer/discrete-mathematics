@@ -126,7 +126,7 @@ width_hopcroft_karp=function(II){  ## berechnet Weite einer geordneten Menge üb
   G=graph_from_adjacency_matrix(II)
   V(G)$type <- c(rep(FALSE,n),rep(TRUE,n))
   ans=max_bipartite_match(G)
-  print(n-ans$matching_size)
+  #print(n-ans$matching_size)
   return(list(width=n-ans$matching_size ))}
   
   
@@ -2057,7 +2057,9 @@ stylized_betweeness <- function(g,h,i,context, attribute_weights){
 
 
 incidence_cut=function(I,width,interval=quantile(unique(as.vector(I)),c(0.01,0.95))){
-    #interval <<- interval
+  vc <- width_hopcroft_karp(compute_quotient_order(compute_transitive_hull(I >= max(I))))
+  if(vc <= width){return(I >= max(I))}
+  #interval <<- interval
   f <- function(C,I){W=width_hopcroft_karp(compute_quotient_order(compute_transitive_hull(I >=C)))$width;return(W-width)}
     ans <- uniroot(f,interval=interval,I=I)
 return(compute_transitive_hull(I>=ans$root))}
@@ -2070,6 +2072,7 @@ return(compute_transitive_hull(I>=ans$root))}
 
 
 starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0)){
+  if (dim(Z)[1] != dim(Z)[2] | dim(Z)[1] != dim(Z)[3] | dim(Z)[2] != dim(Z)[3]){print("dimension mismatch")}
   m <- nrow(Z)
   model <- list(modelsense="max",obj=u,lb=rep(0,m),ub=rep(1,m))
   solutions <- list()
