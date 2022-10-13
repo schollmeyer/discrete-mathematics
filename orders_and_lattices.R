@@ -111,6 +111,19 @@ tr=function(I){   # berechnet eine transitive (pseudo-)Reduktion einer Relation 
   p=invPerm(o)
 return(ans[p,p])}
 
+compute_maximal_elements <- function(relation_mat) {
+  
+  mat <- relation_mat
+  diag(mat) <- 1
+  mask <- !duplicated(mat)&!duplicated(t(mat))
+  index <- which(mask)
+  mat <- mat[index,index]
+  diag(mat) <- 0
+  
+  return(index[which(rowSums(mat)==0)])
+  
+}
+
 
 
 width_hopcroft_karp=function(II){  ## berechnet Weite einer geordneten Menge über eine  maximume Matching in einem bipartiten Graph formulierung und den Hopcroft-Karp Algorithmus
@@ -2125,6 +2138,19 @@ starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0))
 
 
 
+
+starshaped_subgroup_discovery_recompute <- function(models,objective){
+  
+  
+  
+  ans <- -Inf
+  for(k in (1: length(models))){
+    M <- models[[k]]
+    M$obj <- objective
+    ans <- max(ans,gurobi(M)$objval)
+  }
+  
+  return(ans)}
 
 
 starshaped_subgroup_discovery_h0 <- function(models){
