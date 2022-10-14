@@ -2119,7 +2119,8 @@ starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0))
   
   
   I <<- Z[i,,]
-  #I <- incidence_cut(Z[i,,],vc_dim)
+  if (vc_dim == Inf) { I <- (Z[i,,] >= max(Z[k,,]))*1}
+  else{I <- incidence_cut(Z[i,,],vc_dim)}
   
   
   model <- model_from_qoset(t(I))# Z[k,,]))
@@ -2154,7 +2155,7 @@ starshaped_subgroup_discovery_recompute <- function(models,objective){
   return(ans)}
 
 
-starshaped_subgroup_discovery_h0 <- function(models){
+starshaped_subgroup_discovery_h0 <- function(models,params=list(oututflag=0)){
   
   v <- sample(models[[1]]$obj)
   
@@ -2162,7 +2163,7 @@ starshaped_subgroup_discovery_h0 <- function(models){
   for(k in (1: length(models))){
     M <- models[[k]]
     M$obj <- v
-    ans <- max(ans,gurobi(M)$objval)
+    ans <- max(ans,gurobi(M,params=params)$objval)
   }
   
   return(ans)}

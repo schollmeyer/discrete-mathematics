@@ -9,7 +9,7 @@ Z <- array(0,rep(length(corders),3))
 
 
 attribute_weights=colMeans(context)
-for(k in (463:dim(Z)[1])){
+for(k in (154:dim(Z)[1])){
   for(l in (1:dim(Z)[1])){
     for(m in (1:dim(Z)[1])){
       
