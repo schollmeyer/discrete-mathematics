@@ -29,7 +29,7 @@ list_to_context <- function(list){        #### converts a list of orders given b
 return(mat)				     
 	
 }
-context_to_list <- function(context,complemented=FALSE){
+context_to_list <- function(context,complemented=FALSE,colnames=NULL,rownames=NULL){
 	m <- nrow(context)
 	q <- sqrt(ncol(context)/2)
 	q2=q
@@ -38,7 +38,8 @@ context_to_list <- function(context,complemented=FALSE){
 	list <- list()
 	for(k in (1:m)){
 		temp <- context[k,];dim(temp) <- c(q,q2)
-		#colnames(temp) <- rownames(temp) <- NAMES
+		colnames(temp) <- colnames
+		rownames(temp) <- rownames
 		list[[k]] <- temp
 	}
 				     
@@ -51,7 +52,7 @@ return(list)}
 ########				   ########
 ###################################
 
-incidence=function(X){          ## erzeugt Inzidenzmatrix einer gegebenen Datentabelle (Zeilen entsprechen statistischen Einheiten und Spalten entsprechen Auspraegungen verschiedener Dimensionen. statistische Einheit x ist kleinergleich statistische Einheit y iff x_i <= y_i fuer jede Dimension i)
+compute_incidence=function(X){          ## erzeugt Inzidenzmatrix einer gegebenen Datentabelle (Zeilen entsprechen statistischen Einheiten und Spalten entsprechen Auspraegungen verschiedener Dimensionen. statistische Einheit x ist kleinergleich statistische Einheit y iff x_i <= y_i fuer jede Dimension i)
    m=dim(X)[1]
    ans=matrix(FALSE,ncol=m,nrow=m)
    for(k in (1:m)){
@@ -2051,14 +2052,14 @@ cond.print=function(text,step,stepsize){if(stepsize != Inf){if(step %% stepsize 
 
 
 
-U <- function(I){
+compute_quotient_order <- function(I){
   
   #computes quotient order from a quasiorder
 index <- !duplicated(I)&!duplicated(t(I));return(I[index,index])}
 
-compute_quotient_order <- U
+ 
 
-stylized_betweeness <- function(g,h,i,context, attribute_weights){
+compute_stylized_betweeness <- function(g,h,i,context, attribute_weights){
   
   common_attributes <- which(g==1 & i==1)
   if(length(common_attributes)==0){return(1)}
@@ -2069,7 +2070,7 @@ stylized_betweeness <- function(g,h,i,context, attribute_weights){
 
 
 
-incidence_cut=function(I,width,interval=quantile(unique(as.vector(I)),c(0.01,0.95))){
+cut_incidence=function(I,width,interval=quantile(unique(as.vector(I)),c(0.01,0.95))){
   vc <- width_hopcroft_karp(compute_quotient_order(compute_transitive_hull(I >= max(I))))
   if(vc <= width){return(I >= max(I))}
   #interval <<- interval
@@ -2084,27 +2085,28 @@ return(compute_transitive_hull(I>=ans$root))}
 
 
 
-starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0)){
-  if (dim(Z)[1] != dim(Z)[2] | dim(Z)[1] != dim(Z)[3] | dim(Z)[2] != dim(Z)[3]){print("dimension mismatch")}
-  m <- nrow(Z)
-  model <- list(modelsense="max",obj=u,lb=rep(0,m),ub=rep(1,m))
+starshaped_subgroup_discovery  <- function(stylized_betweeness,objective,vc_dim,params=list(Outputflag=0)){
+  
+  if (dim(stylized_betweeness)[1] != dim(stylized_betweeness)[2] | dim(stylized_betweeness)[1] != dim(stylized_betweeness)[3] | dim(stylized_betweeness)[2] != dim(stylized_betweeness)[3]){print("dimension mismatch")}
+  m <- nrow(stylized_betweeness)
+  model <- list(modelsense="max",obj=objective,lb=rep(0,m),ub=rep(1,m))
   solutions <- list()
   objvals <- rep(0,m)
   stars <- array(0,c(m,m))
   
   models=list()
   for(k in (1:m)){  ## quantify over all starcenters
-    #I <<- Z[k,,]
     
-    if (vc_dim == Inf) { I <- (Z[k,,] >= max(Z[k,,]))*1}
-    else{ I <- incidence_cut(Z[k,,],vc_dim) }
+    
+    if (vc_dim == Inf) { incidence <- (stylized_betweeness[k,,] >= max(stylized_betweeness[k,,]))*1}
+    else{ I <- cut_incidence(Z[k,,],vc_dim) }
     
     
     model <- model_from_qoset(t(I))# Z[k,,]))
-    model$obj <- u
+    model$obj <- objective
     model$lb <- rep(0,m)
     model$ub <-rep(1,m)
-    model$lb[k] <- 1              ## Sternmittelpunkt drinnen
+    model$lb[k] <- 1              ## force centerpoint to be in the set
     model$modelsense <- "max"
     b <- gurobi(model,params=params)
     solutions[[k]] <- b
@@ -2118,13 +2120,13 @@ starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0))
   i <- which.max(objvals) 
   
   
-  I <<- Z[i,,]
-  if (vc_dim == Inf) { I <- (Z[i,,] >= max(Z[k,,]))*1}
-  else{I <- incidence_cut(Z[i,,],vc_dim)}
+  #I <<- stylized_betweeness[i,,]
+  if (vc_dim == Inf) { incidence <- (stylized_betweeness[i,,] >= max(stylized_betweeness[k,,]))*1}
+  else{incidence <- cut_incidence(stylized_betweeness[i,,],vc_dim)}
   
   
-  model <- model_from_qoset(t(I))# Z[k,,]))
-  model$obj <- u
+  model <- model_from_qoset(t(incidence))
+  model$obj <- objective
   model$lb <- rep(0,m)
   model$ub <-rep(1,m)
   model$lb[k] <- 1              ## Sternmittelpunkt drinnen
@@ -2133,13 +2135,31 @@ starshaped_subgroup_discovery  <- function(Z,u,vc_dim,params=list(Outputflag=0))
   #solutions[[k]] <- b
   #objvals[k] <- b$objval
   #stars[k,] <- b$x
-  #I <- incidence_cut(Z[i,,],vc_dim)
+  incidence <- cut_incidence(Z[i,,],vc_dim)
   
-  return(list(models=models,obj=u,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,I_fuzzy=Z[i,,] , I = I,model=model) )}
+return(list(models=models,obj=objective,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,fuzzy_incidence=stylized_betweeness[i,,] , incidence = incidence,model=model) )}
 
+plot_stars <- function(starshaped_result,distance_function){
+  
+  i <- which(starshaped_result$star==1)
+  
+  j <- compute_maximal_elements(starshaped_result$incidence[i,i])
+  
+  
+  i[j]
+  print(i[j])
+  
+  
+  
+  
+  
+}
 
-
-
+plot_corder <- function(corder){
+  m <- nrow(corder)
+  plot(as.relation(corder[(1:m),(1:m)]))
+  
+}
 
 starshaped_subgroup_discovery_recompute <- function(models,objective){
   
