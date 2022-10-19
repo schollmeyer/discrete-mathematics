@@ -984,8 +984,17 @@ min_k_obj_generated=function(extent,intent,X){min_k_attr_generated(intent,extent
 ##########################################
 
 
-compute_objective <- function(dat,target,target_class){
-v <- (dat[[target]]==target_class)-(dat[[target]]!=target_class)*mean(dat[[target]]==target_class)/mean(dat[[target]]!=target_class)
+compute_objective <- function(dat,target,target_class,weights=rep(1,length(dat[[target]]))){
+  
+  if(any(weights<0)) {print("warning: negative weights")}
+  i <- which(dat[[target]]==target_class)
+  print(i)
+  v <- rep(0,length(dat[[target]]))
+  print(length(v))
+  v[i] <- weights[i]/sum(weights[i])
+  v[-i] <- -weights[-i]/sum(weights[-i]) 
+  
+#v <- (dat[[target]]==target_class)-(dat[[target]]!=target_class)*mean(dat[[target]]==target_class)/mean(dat[[target]]!=target_class)
 return(v)}
 
 
@@ -2099,10 +2108,10 @@ starshaped_subgroup_discovery  <- function(stylized_betweeness,objective,vc_dim,
     
     
     if (vc_dim == Inf) { incidence <- (stylized_betweeness[k,,] >= max(stylized_betweeness[k,,]))*1}
-    else{ I <- cut_incidence(Z[k,,],vc_dim) }
+    else{ incidence <- cut_incidence(Z[k,,],vc_dim) }
     
     
-    model <- model_from_qoset(t(I))# Z[k,,]))
+    model <- model_from_qoset(t(incidence))# Z[k,,]))
     model$obj <- objective
     model$lb <- rep(0,m)
     model$ub <-rep(1,m)
@@ -2135,7 +2144,7 @@ starshaped_subgroup_discovery  <- function(stylized_betweeness,objective,vc_dim,
   #solutions[[k]] <- b
   #objvals[k] <- b$objval
   #stars[k,] <- b$x
-  incidence <- cut_incidence(Z[i,,],vc_dim)
+  #incidence <- cut_incidence(Z[i,,],vc_dim)
   
 return(list(models=models,obj=objective,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,fuzzy_incidence=stylized_betweeness[i,,] , incidence = incidence,model=model) )}
 
@@ -2155,9 +2164,9 @@ plot_stars <- function(starshaped_result,distance_function){
   
 }
 
-plot_corder <- function(corder){
+plot_corder <- function(corder,main=""){
   m <- nrow(corder)
-  plot(as.relation(corder[(1:m),(1:m)]))
+  plot(as.relation(corder[(1:m),(1:m)]),main=main)
   
 }
 
@@ -2175,7 +2184,7 @@ starshaped_subgroup_discovery_recompute <- function(models,objective){
   return(ans)}
 
 
-starshaped_subgroup_discovery_h0 <- function(models,params=list(oututflag=0)){
+starshaped_subgroup_discovery_h0 <- function(models,params=list(outputflag=0)){
   
   v <- sample(models[[1]]$obj)
   
