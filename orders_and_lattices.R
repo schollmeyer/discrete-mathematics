@@ -2098,7 +2098,7 @@ return(compute_transitive_hull(I>=ans$root))}
 starshaped_subgroup_discovery  <- function(stylized_betweenness,objective,vc_dim,params=list(Outputflag=0)){
   
   if (dim(stylized_betweenness)[1] != dim(stylized_betweenness)[2] | dim(stylized_betweenness)[1] != dim(stylized_betweenness)[3] | dim(stylized_betweenness)[2] != dim(stylized_betweenness)[3]){print("dimension mismatch")}
-  m <- nrow(stylized_betweeness)
+  m <- nrow(stylized_betweenness)
   model <- list(modelsense="max",obj=objective,lb=rep(0,m),ub=rep(1,m))
   solutions <- list()
   objvals <- rep(0,m)
