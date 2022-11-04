@@ -81,7 +81,7 @@ return(ans)}
 
 neighbour_incidence=function(I){     #berechnet Nachbarschaftsrelation (covering relation) zu einer homogenen Relation I)
   n=dim(I)[1]
-  II=as.logical(I-relational.product(I-diag(rep(1,n)),I-diag(rep(1,n))))
+  II=as.logical(I-relational_product(I-diag(rep(1,n)),I-diag(rep(1,n))))
   dim(II)=c(n,n)
 return(II)}
 
@@ -95,7 +95,7 @@ transitive_hull=function(I){   #  berechnet transitive Huelle einer homogenen Re
   temp=I
   while(any(temp.old!=temp)) {
     temp.old=temp
-    temp=relational.product(temp,temp)
+    temp=relational_product(temp,temp)
   }
 return(temp)}
 
@@ -2095,9 +2095,9 @@ return(compute_transitive_hull(I>=ans$root))}
 
 
 
-starshaped_subgroup_discovery  <- function(stylized_betweeness,objective,vc_dim,params=list(Outputflag=0)){
+starshaped_subgroup_discovery  <- function(stylized_betweenness,objective,vc_dim,params=list(Outputflag=0)){
   
-  if (dim(stylized_betweeness)[1] != dim(stylized_betweeness)[2] | dim(stylized_betweeness)[1] != dim(stylized_betweeness)[3] | dim(stylized_betweeness)[2] != dim(stylized_betweeness)[3]){print("dimension mismatch")}
+  if (dim(stylized_betweenness)[1] != dim(stylized_betweenness)[2] | dim(stylized_betweenness)[1] != dim(stylized_betweenness)[3] | dim(stylized_betweenness)[2] != dim(stylized_betweeness)[3]){print("dimension mismatch")}
   m <- nrow(stylized_betweeness)
   model <- list(modelsense="max",obj=objective,lb=rep(0,m),ub=rep(1,m))
   solutions <- list()
@@ -2108,7 +2108,7 @@ starshaped_subgroup_discovery  <- function(stylized_betweeness,objective,vc_dim,
   for(k in (1:m)){  ## quantify over all starcenters
     
     
-    if (vc_dim == Inf) { incidence <- (stylized_betweeness[k,,] >= max(stylized_betweeness[k,,]))*1}
+    if (vc_dim == Inf) { incidence <- (stylized_betweenness[k,,] >= max(stylized_betweenness[k,,]))*1}
     else{ incidence <- cut_incidence(Z[k,,],vc_dim) }
     
     
@@ -2131,8 +2131,8 @@ starshaped_subgroup_discovery  <- function(stylized_betweeness,objective,vc_dim,
   
   
   #I <<- stylized_betweeness[i,,]
-  if (vc_dim == Inf) { incidence <- (stylized_betweeness[i,,] >= max(stylized_betweeness[k,,]))*1}
-  else{incidence <- cut_incidence(stylized_betweeness[i,,],vc_dim)}
+  if (vc_dim == Inf) { incidence <- (stylized_betweenness[i,,] >= max(stylized_betweenness[k,,]))*1}
+  else{incidence <- cut_incidence(stylized_betweenness[i,,],vc_dim)}
   
   
   model <- model_from_qoset(t(incidence))
@@ -2147,7 +2147,7 @@ starshaped_subgroup_discovery  <- function(stylized_betweeness,objective,vc_dim,
   #stars[k,] <- b$x
   #incidence <- cut_incidence(Z[i,,],vc_dim)
   
-return(list(models=models,obj=objective,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,fuzzy_incidence=stylized_betweeness[i,,] , incidence = incidence,model=model) )}
+return(list(models=models,obj=objective,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,fuzzy_incidence=stylized_betweenness[i,,] , incidence = incidence,model=model) )}
 
 plot_stars <- function(starshaped_result,distance_function){
   
