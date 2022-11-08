@@ -112,18 +112,23 @@ tr=function(I){   # berechnet eine transitive (pseudo-)Reduktion einer Relation 
   p=invPerm(o)
 return(ans[p,p])}
 
+
+
 compute_maximal_elements <- function(relation_mat) {
-  
+
   mat <- relation_mat
   diag(mat) <- 1
   mask <- !duplicated(mat)&!duplicated(t(mat))
   index <- which(mask)
   mat <- mat[index,index]
   diag(mat) <- 0
-  
+
   return(index[which(rowSums(mat)==0)])
-  
+
 }
+
+compute_minimal_elements <- function(relation_mat){
+  compute_maximal_elements(t(relation_mat))}
 
 
 
