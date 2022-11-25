@@ -2184,7 +2184,7 @@ starshaped_subgroup_discovery_recompute <- function(models,objective){
   for(k in (1: length(models))){
     M <- models[[k]]
     M$obj <- objective
-    ans <- max(ans,gurobi(M)$objval)
+    ans <- max(ans,gurobi(M,list(outputflag=0))$objval)
   }
   
   return(ans)}
