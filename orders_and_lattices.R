@@ -2,7 +2,7 @@
 
 library(Matrix)
 library(gurobi)
-library(igraph)  
+library(igraph)
 #library(Biobase) ##für Funktion rowMin
 library(geometry) ## für Fufnktion cart2bar (für Erstellung Kontext für Geometrie)
 
@@ -22,12 +22,12 @@ source("fca_ufg_partial_order.R",local=TRUE)
 list_to_context <- function(list){        #### converts a list of orders given by incidence relations as 0-1 matrices into a context of crosses
 	m <- length(list)
 	mat <- array(0,c(m, length(list[[1]])))
-        
+
 	for(k in (1:m)){
 		mat[k,] <- as.vector(list[[k]])
 	}
-return(mat)				     
-	
+return(mat)
+
 }
 context_to_list <- function(context,complemented=FALSE,colnames=NULL,rownames=NULL){
 	m <- nrow(context)
@@ -42,7 +42,7 @@ context_to_list <- function(context,complemented=FALSE,colnames=NULL,rownames=NU
 		rownames(temp) <- rownames
 		list[[k]] <- temp
 	}
-				     
+
 return(list)}
 ###################################
 ########				   ########
@@ -89,7 +89,7 @@ return(II)}
 
 
 
-transitive_hull=function(I){   #  berechnet transitive Huelle einer homogenen Relation  
+transitive_hull=function(I){   #  berechnet transitive Huelle einer homogenen Relation
   m=dim(I)[1]
   temp.old=array(0,c(m,m))
   temp=I
@@ -113,16 +113,16 @@ tr=function(I){   # berechnet eine transitive (pseudo-)Reduktion einer Relation 
 return(ans[p,p])}
 
 compute_maximal_elements <- function(relation_mat) {
-  
+
   mat <- relation_mat
   diag(mat) <- 1
   mask <- !duplicated(mat)&!duplicated(t(mat))
   index <- which(mask)
   mat <- mat[index,index]
   diag(mat) <- 0
-  
+
   return(index[which(rowSums(mat)==0)])
-  
+
 }
 
 
@@ -142,13 +142,13 @@ width_hopcroft_karp=function(II){  ## berechnet Weite einer geordneten Menge üb
   ans=max_bipartite_match(G)
   #print(n-ans$matching_size)
   return(list(width=n-ans$matching_size ))}
-  
-  
+
+
 width=function(I){width.hopcroft.karp(I)$width} #Berechnet Weite einer geordneten Menge ueber die Funktion width.hopcroft.karp
 
 
-downarrow=function(x,bg){ # berechnet Menge aller Elemente unterhalb einer gegebenen Menge M (gegeben durch x[i]=1 iff i \in M)  (bezueglich der Relation bg$incidence) 
-  if(all(x==0)){return(x)}  
+downarrow=function(x,bg){ # berechnet Menge aller Elemente unterhalb einer gegebenen Menge M (gegeben durch x[i]=1 iff i \in M)  (bezueglich der Relation bg$incidence)
+  if(all(x==0)){return(x)}
   else{
     index=which(x==1)
     temp=bg$incidence[,index]
@@ -192,8 +192,8 @@ next_closure=function(cop,context,stepsize,n=dim(context)[2],Nmax=700000){   # N
   if(all(temp==1)){return(ans[(1:(t-1)),])}
   if(t>Nmax){ans=rbind(ans,array(as.logical(0),c(Nmax,n)));Nmax=2*Nmax}
  }
-return(ans[(1:(t-1)),])  
-} 
+return(ans[(1:(t-1)),])
+}
 
 
 lower.i=function(A,B,i){  ### Hilfsfunktion fuer Next closure Algorithmus
@@ -244,7 +244,7 @@ L=function(A,context){   ## Operator L vgl. Ganter, Wille 1996 S. 80 ff
      index=which(A==1)
      for(k in index){
        temp2=A;temp2[k]=0
-       
+
        temp=pmax(temp,H.attr(temp2,context))
      }
    }
@@ -252,18 +252,18 @@ L=function(A,context){   ## Operator L vgl. Ganter, Wille 1996 S. 80 ff
 }
 
 L.infty=function(A,context){   ## Operator L_infty vgl. Ganter, Wille 1996 S. 85 ff
-   
+
    temp.old=A
    temp=L(A,context)
    while(any(temp.old!=temp)){
       temp.old=temp
       temp=L(temp,context)
-   } 
+   }
 return(temp)}
 
 H.attr=function(A,context){PSI(PHI(A,context),context)} ## Berechnet zu Merkmalsmenge A (gegeben durch A[i]=1 iff Merkmal i ist in Menge A, 0 sonst) deren Hülle PSI(PHI(A))
 	H.obj=function(A,context){PHI(PSI(A,context),context)} ## Berechnet zu Gegenstandsmenge A (gegeben durch A[i]=1 iff Gegenstand i ist in Menge A, 0 sonst) deren Hülle PHI(PSI(A))
-	
+
 implications=function(bg){               ### Hier stimmt was nicht!!!
   a=next_closure(L.infty,bg)
   print((a))
@@ -288,7 +288,7 @@ return(ans)}
 
 concept_lattice=function(context,compute.extents=TRUE,stepsize=20000){### Berechnet Begriffsverband zu Kontext.
 																		### stepsize beeinflusst nur die Anzeige des Berechnungsfortschritts: Pro  stepsize erzeugter Begriffe wird einmal ausgegeben, wieviele Begriffe bereits berechnet wurden
-   
+
    ans=list()
    ans$intents=next_closure(H.attr,context,stepsize=stepsize)
    m=dim(ans$intents)[1]
@@ -299,18 +299,18 @@ concept_lattice=function(context,compute.extents=TRUE,stepsize=20000){### Berech
         ans$extents[k,]=PHI(ans$intents[k,],context)
         ans$concepts[k]=paste("{",paste((rownames(context))[which(ans$extents[k,]==1)],collapse=","),"}   {",paste((colnames(context))[which(ans$intents[k,]==1)] ,collapse=","),"}",collapse="")
       }
-      
+
    }
    else{
      for(k in (1:m)){
         ans$concepts[k]=paste("{",paste((colnames(context))[which(ans$intents[k,]==1)],collapse=","),"}",collapse="")
      }
    }
-   
-   
-   
-   
-   
+
+
+
+
+
 return(ans)}
 
 
@@ -367,17 +367,17 @@ conceptual.scaling=function(X){  ## Hauptfunktion zum automatischen begriffliche
    XX=array(0,c(m,D$dim))
    CN=colnames(X)
    CN2=rep("",D$dim)
-  
-   
+
+
    t=1
    for(k in (1:n)){
       print(c(k,": ",class(X[,k])),quote=FALSE)
      if(class(X[,k])[1]=="ordered" | class(X[,k])[1]=="numeric" | class(X[,k])[1]=="integer"){ temp= cbind(ordinal.scaling.vec(as.numeric(X[,k]),CN[k]), dordinal.scaling.vec(as.numeric(X[,k]),CN[k]));XX[,(t:(t+D$K[k]-1))]=temp; CN2[(t:(t+D$K[k]-1))] <- colnames(temp);t=t+D$K[k]}
 	 if(class(X[,k])[1]=="factor"){temp=1-nominal.scaling.vec(as.numeric(X[,k]),CN[k]) ; XX[,(t:(t+D$K[k]-1))]=temp;CN2[(t:(t+D$K[k]-1))]  =colnames(temp);t=t+D$K[k]}#,1-nominal.scaling.vec(as.numeric(X[,k])) )}
-  } 
-  
+  }
+
   colnames(XX)=CN2
-return(XX)}  
+return(XX)}
 
 
 
@@ -473,7 +473,7 @@ interordinal.scaling=function(X){cbind(ordinal.scaling(X),dordinal.scaling(X))} 
 
 conceptual.scaling.dim=function(dat){  # berechnet die Anzahl benoetigter Merkmale fuer begriffliche Skalierung
   X=dat
-  
+
   n=dim(X)[2]
   K=rep(0,n)
   NAMES=NULL
@@ -525,13 +525,13 @@ extent_opt_a=function(X,gen.index,v,binary.variables="afap"){##  extentopt: Vers
 	   t=t+1
 	 }
   }
-  
+
   for(k in (1:m)){A[t,which(X[k,]==0)+m]=1;A[t,k]=1;rhs[t]=1;sense[t]=">=";t=t+1}
-  
+
   for(k in (1:n)){A[t,which(mask==1 & X[,k]==0)]=1;A[t,k+m]=1;sense[t]=">=";rhs[t]=1;t=t+1}
   t=t-1
- 
-  
+
+
   ###  setze je nach Methode gewisse Variablen als binaer
   vtypes=rep("C",m+n)
   if(binary.variables=="afap"){
@@ -544,8 +544,8 @@ extent_opt_a=function(X,gen.index,v,binary.variables="afap"){##  extentopt: Vers
 		if(length(gen.index)>min(m,n) & n<=m){
 		    vtypes[-(1:m)]="B"
 		}
-	}	
-		   
+	}
+
   if(binary.variables=="sd"){
     if(m<=n){
       vtypes[(1:m)]="B"
@@ -557,17 +557,17 @@ extent_opt_a=function(X,gen.index,v,binary.variables="afap"){##  extentopt: Vers
     vtypes[gen.index]="B"
     vtypes[-(1:m)]="B"
   }
-  
+
   if(binary.variables=="all"){
     vtypes=rep("B",m+n)
   }
-  
+
   if(  !(binary.variables %in% c("afap","sd","allgen","all"))){print("invalid argument for binary.variabes")}
-           
-		   
-		   
+
+
+
 return(list(A=A[(1:t),],rhs=rhs[(1:t)],sense=sense[(1:t)],modelsense="max",lb=rep(0,m+n),ub=rep(1,m+n),obj=c(v,rep(0,n)),vtypes=vtypes))}
-   
+
 
 extent_opt_b=function(X,gen.index,v,binary.variables="afap"){##  extentopt: Version, wie in TR 209, S.23 beschrieben, nur Ungleichungen (21) verschärft
 
@@ -576,53 +576,53 @@ extent_opt_b=function(X,gen.index,v,binary.variables="afap"){##  extentopt: Vers
   mask=rep(0,m)
   mask[gen.index]=1
   N=2*(m+n)
-  
+
   A= array(0,c(N,m+n))
   rhs=rep(0,N)
   sense=rep("",N)
   t=1
-  for(k in (1:m)){         
+  for(k in (1:m)){
        i=which(X[k,]==0)
 	   if(length(i)>=1){
 	   	   A[t,k]=length(i);A[t,i+m]=1;rhs[t]=length(i);sense[t]="<="
 	       t=t+1
 	    }
-	 
+
     }
-  
-  for(k in (1:n)){        
+
+  for(k in (1:n)){
        i=which(X[,k]==0)
 	   if(length(i)>=1){
 	   	   A[t,k+m]=length(i);A[t,i]=1;rhs[t]=length(i);sense[t]="<="
 	       t=t+1
 	    }
-	 
+
     }
-  
+
   for(k in (1:m)){
  i=which(X[k,]==0)
   if(length(i)>=1){
 A[t,which(X[k,]==0)+m]=1;A[t,k]=1;rhs[t]=1;sense[t]=">=";t=t+1
 }}
-  
+
   for(k in (1:n)){
 j=which(mask==1 & X[,k]==0)
 if(length(j)>=1){
 A[t,which(mask==1 & X[,k]==0)]=1;A[t,k+m]=1;sense[t]=">=";rhs[t]=1;t=t+1}}
   t=t-1
- 
-  
-  
-  
-  
+
+
+
+
+
   lb=rep(0,m+n)
   ub= rep(1,m+n)
   idx=which(colSums(X[gen.index,])==length(gen.index))
   if(length(idx)>0){lb[m+idx]=1}
-  
+
   idx=which(rowSums(X[,])==n)
   if(length(idx)>0){lb[idx]=1}
-  
+
   ###  setze je nach Methode gewisse Variablen als binaer
   vtypes=rep("C",m+n)
   if(binary.variables=="afap"){
@@ -635,8 +635,8 @@ A[t,which(mask==1 & X[,k]==0)]=1;A[t,k+m]=1;sense[t]=">=";rhs[t]=1;t=t+1}}
 		if(length(gen.index)>min(m,n) & n<=m){
 		    vtypes[-(1:m)]="B"
 		}
-	}	
-		   
+	}
+
   if(binary.variables=="sd"){
     if(m<=n){
       vtypes[(1:m)]="B"
@@ -648,19 +648,19 @@ A[t,which(mask==1 & X[,k]==0)]=1;A[t,k+m]=1;sense[t]=">=";rhs[t]=1;t=t+1}}
     vtypes[gen.index]="B"
     vtypes[-(1:m)]="B"
   }
-  
+
   if(binary.variables=="all"){
     vtypes=rep("B",m+n)
   }
-  
+
   if(  !(binary.variables %in% c("afap","sd","allgen","all"))){print("invalid argument for binary.variabes")}
-  
-  
+
+
 return(list(A=as.simple_triplet_matrix(A[(1:t),]),rhs=rhs[(1:t)],sense=sense[(1:t)],modelsense="max",lb=lb,ub=ub,obj=c(v,rep(0,n)),ext.obj=v,intent.obj=rep(0,n),m=m,n=n,vtypes=vtypes,n.constr=t,context=X))}
-   
-   
-   
-   
+
+
+
+
 extent_opt_c=function(X,gen.index,v,binary.variables="afap"){##  extentopt: Version, wie extent.opt.b, nur, dass Matrix, die Ungleichungsnebenbedingungen enthält, direkt sofort als simple triplet Matrix erzeugt wird
 
   m=dim(X)[1]
@@ -672,16 +672,16 @@ extent_opt_c=function(X,gen.index,v,binary.variables="afap"){##  extentopt: Vers
   I=rep(as.integer(0),5*NN)
   J=I
   V=I
-  
+
   lb=rep(0,m+n);ub=rep(1,m+n)
-  
+
   rhs=rep(0,N)
   sense=rep("",N)
   t=1
   tt=1
   for(k in (1:m)){
        i=which(X[k,]==0)
-	   
+
 	   if(length(i) >=1){
 	       L=length(i)
 	       I[tt]=t
@@ -692,19 +692,19 @@ extent_opt_c=function(X,gen.index,v,binary.variables="afap"){##  extentopt: Vers
 		   I[index]=t
 		   J[index]= i+m ###A[t,i+m]=1;
 		   V[index]=1
-		   
+
 	   	   tt=tt+L
 		   rhs[t]=length(i);sense[t]="<="
 	       t=t+1
 	    }
 		else{lb[k]=1}
-	 
+
     }
-	
-  
+
+
   for(k in (1:n)){
        i=which(X[,k]==0)
-	   
+
 	   if( length(i) >=1){
 	       L=length(i)
 	       I[tt]=t
@@ -721,9 +721,9 @@ extent_opt_c=function(X,gen.index,v,binary.variables="afap"){##  extentopt: Vers
 	    }
 	    else{lb[k+m]=1}
     }
-	
-	
-  
+
+
+
   for(k in (1:m)){
  i=which(X[k,]==0)
  L=length(i)
@@ -732,21 +732,21 @@ extent_opt_c=function(X,gen.index,v,binary.variables="afap"){##  extentopt: Vers
 	I[tt]=t
 	J[tt]=k  #A[t,k]=1;
 	V[tt]=1
-	
+
 	tt=tt+1
-	
+
 	index=(tt:(tt+L-1))
 	I[index]=t
 	J[index]=i+m  #A[t,i+m]=1;
 	V[index]=1
     tt=tt+L
-  
+
     rhs[t]=1;sense[t]=">=";t=t+1
 }}
 
 
 
-  
+
   for(k in (1:n)){
 j=which(mask==1 & X[,k]==0)
 
@@ -754,7 +754,7 @@ j=which(mask==1 & X[,k]==0)
 if(length(j) >=1){
 
   L=length(j)
-  
+
   I[tt]=t
   J[tt]=k+m     #A[t,k+m]=1;
   V[tt]=1
@@ -770,9 +770,9 @@ else{lb[k+m]=1}}
 
   tt=tt-1
   t=t-1
-   
+
   jj=which(I!=0 &J!=0)
-  
+
   ###  setze je nach Methode gewisse Variablen als binaer
   vtypes=rep("C",m+n)
   if(binary.variables=="afap"){
@@ -785,8 +785,8 @@ else{lb[k+m]=1}}
 		if(length(gen.index)>min(m,n) & n<=m){
 		    vtypes[-(1:m)]="B"
 		}
-	}	
-		   
+	}
+
   if(binary.variables=="sd"){
     if(m<=n){
       vtypes[(1:m)]="B"
@@ -798,17 +798,17 @@ else{lb[k+m]=1}}
     vtypes[gen.index]="B"
     vtypes[-(1:m)]="B"
   }
-  
+
   if(binary.variables=="all"){
     vtypes=rep("B",m+n)
   }
-  
+
   if(  !(binary.variables %in% c("afap","sd","allgen","all"))){print("invalid argument for binary.variabes")}
 return(list(A=simple_triplet_matrix(I[jj],J[jj],V[jj],nrow=t,ncol=m+n),rhs=rhs[(1:t)],sense=sense[(1:t)],modelsense="max",lb=lb,ub=ub,obj=c(v,rep(0,n)),ext.obj=v,intent.obj=rep(0,n),m=m,n=n,vtypes=vtypes,n.constr=t,context=X))}
-    
- 
 
-extent_opt=extent_opt_c  ### standardmaessig wird immer Version extent.opt.c verwendet 
+
+
+extent_opt=extent_opt_c  ### standardmaessig wird immer Version extent.opt.c verwendet
 
 
 
@@ -821,53 +821,53 @@ k_extent_opt_b=function(X,gen_index,v,binary_variables="afap",K){##  extentopt: 
   mask=rep(0,m)
   mask[gen_index]=1
   N=2*(m+n)
-  
+
   A= array(0,c(N,m+n))
   rhs=rep(0,N)
   sense=rep("",N)
   t=1
-  for(k in (1:m)){         
+  for(k in (1:m)){
        i=which(X[k,]==0)
 	   if(length(i)>=1){
 	   	   A[t,k]=length(i);A[t,i+m]=1;rhs[t]=length(i);sense[t]="<="
 	       t=t+1
 	    }
-	 
+
     }
-  
-  for(k in (1:n)){        
+
+  for(k in (1:n)){
        i=which(X[,k]==0)
 	   if(length(i)>=1){
 	   	   A[t,k+m]=length(i);A[t,i]=1;rhs[t]=length(i);sense[t]="<="
 	       t=t+1
 	    }
-	 
+
     }
-  
+
   for(k in (1:m)){
  i=which(X[k,]==0)
   if(length(i)>=1){
 A[t,which(X[k,]==0)+m]=1;A[t,k]=1;rhs[t]=1;sense[t]=">=";t=t+1
 }}
-  
+
  # for(k in (1:n)){
 #j=which(mask==1 & X[,k]==0)
 #if(length(j)>=1){
 #A[t,which(mask==1 & X[,k]==0)]=1;A[t,k+m]=1;sense[t]=">=";rhs[t]=1;t=t+1}}
   t=t-1
- 
-  
-  
-  
-  
+
+
+
+
+
   lb=rep(0,m+n)
   ub= rep(1,m+n)
   idx=which(colSums(X[gen_index,])==length(gen_index))
   if(length(idx)>0){lb[m+idx]=1}
-  
+
   idx=which(rowSums(X[,])==n)
   if(length(idx)>0){lb[idx]=1}
-  
+
   ###  setze je nach Methode gewisse Variablen als binaer
   vtypes=rep("C",m+n)
   if(binary_variables=="afap"){
@@ -880,8 +880,8 @@ A[t,which(X[k,]==0)+m]=1;A[t,k]=1;rhs[t]=1;sense[t]=">=";t=t+1
 		if(length(gen_index)>min(m,n) & n<=m){
 		    vtypes[-(1:m)]="B"
 		}
-	}	
-		   
+	}
+
   if(binary_variables=="sd"){
     if(m<=n){
       vtypes[(1:m)]="B"
@@ -893,32 +893,32 @@ A[t,which(X[k,]==0)+m]=1;A[t,k]=1;rhs[t]=1;sense[t]=">=";t=t+1
     vtypes[gen.index]="B"
     vtypes[-(1:m)]="B"
   }
-  
+
   if(binary_variables=="all"){
     vtypes=rep("B",m+n)
   }
-  
+
   if(  !(binary_variables %in% c("afap","sd","allgen","all"))){print("invalid argument for binary.variabes")}
-  
+
   A=rbind(A[(1:t),],c(rep(0,m),rep(1,n)))
   rhs=c(rhs[(1:t)],K)
   sense=c(sense[(1:t)],"<")
   ##Über vtypes nochmalnachdenken:
-  
+
   vtypes[(1:m)]="C"
   vtypes[-(1:m)]="B"
-  
+
 return(list(A=as.simple_triplet_matrix(A),rhs=rhs,sense=sense,modelsense="max",lb=lb,ub=ub,obj=c(v,rep(0,n)),ext.obj=v,intent.obj=rep(0,n),m=m,n=n,vtypes=vtypes,n.constr=t,context=X))}
 
 
 
 
-########################  
-  
+########################
+
 test_extent_opt=function(method,M=10,N=5,p=0.5,M1=5,binary_variables="afap"){  ## testet auf Korrektheit der Funktion extent.opt
   X=random_context(M=M,N=N,p=p)#runif(M*N)>=0.5;dim(X)=c(M,N)
   i=sample((1:M),size=round(M/2,0),replace=FALSE)
-  
+
   idx=sample((1:M),size=M1,replace=FALSE)
   v=rep(0,M)
   v[idx]=1/M1
@@ -938,17 +938,17 @@ test_extent_opt=function(method,M=10,N=5,p=0.5,M1=5,binary_variables="afap"){  #
  result=(gurobi(temp,list(OutputFlag=0)))
  ans1=result$objval
  ans2=(max(a))
- 
+
  X <<- X*1
  i <<- i
  v <<- v
  temp <<-temp
  ans1 <<- ans1
- ans2 <<- ans2 
+ ans2 <<- ans2
  i <<- i
 return(abs(ans1-ans2) <= 10^-9)}
 
-  
+
 ###################################
 
 min_k_attr_generated=function(extent,intent,X){  # Berecchnet für Begriff gegeben durch Umfang extent und Inhalt intent das maximale k, für das der Begriff k-Merkmalserzeugt ist (Kontext X muss ebenfalls mit übergeben werden)
@@ -964,9 +964,9 @@ min_k_attr_generated=function(extent,intent,X){  # Berecchnet für Begriff gegeb
 
 
 min_k_obj_generated=function(extent,intent,X){min_k_attr_generated(intent,extent,t(X))} # Berecchnet für Begriff gegeben durch Umfang extent und Inhalt intent das maximale k, für das der Begriff k-MGegenstandserzeugt ist (Kontext X muss ebenfalls mit übergeben werden)
-  
-  
- 
+
+
+
 
 
 
@@ -986,22 +986,22 @@ min_k_obj_generated=function(extent,intent,X){min_k_attr_generated(intent,extent
 
 
 compute_objective <- function(dat,target,target_class,weights=rep(1,length(dat[[target]]))){
-  
+
   if(any(weights<0)) {print("warning: negative weights")}
   i <- which(dat[[target]]==target_class)
   print(i)
   v <- rep(0,length(dat[[target]]))
   print(length(v))
   v[i] <- weights[i]/sum(weights[i])
-  v[-i] <- -weights[-i]/sum(weights[-i]) 
-  
+  v[-i] <- -weights[-i]/sum(weights[-i])
+
 #v <- (dat[[target]]==target_class)-(dat[[target]]!=target_class)*mean(dat[[target]]==target_class)/mean(dat[[target]]!=target_class)
 return(v)}
 
 
 
 col.reduce=function(X){   ##doppelt???
-  
+
   m=dim(X)[1]
   n=dim(X)[2]
   t=1
@@ -1059,12 +1059,12 @@ subgroup_discovery_fca_milp=function(dat,target,target.class,nrep,heuristic,remo
    print(objects(XX))
    X=conceptual.scaling(XX)
    print("E")
-   
 
-   
+
+
    print(c("dim dat: ",dim(dat)),quote=FALSE)
    print(c("dim X (conceptual scaling dat):     ",dim(X)),quote=FALSE)
-   
+
    if(remove.full.columns){
      X=remove.full.cols(X)
      print(c("dim X without full columns:         ",dim(X)),quote=FALSE)
@@ -1077,13 +1077,13 @@ subgroup_discovery_fca_milp=function(dat,target,target.class,nrep,heuristic,remo
      X=col.reduce(X)
      print(c("dim final X (clarified and reduced):",dim(X)),quote=FALSE)
    }
-   
-   
+
+
    m=dim(X)[1]
    n=dim(X)[2]
-   
+
    M=dim(XX)[2]
-   
+
     # A=NULL
     # A=array(0,c(2*n,m+n))
     # t=1
@@ -1093,24 +1093,24 @@ subgroup_discovery_fca_milp=function(dat,target,target.class,nrep,heuristic,remo
 	  # #print(K)
 	  # temp=rep(0,c(m+n))
 	  # if(class(XX[,k])[1]=="factor"){
-	 
+
 	    # temp[((t+m):(t+m+K-1))]=1
 	    # A[t,]=temp
 	    # T=T+1
 	    # #A=rbind(A,temp)
-	   
+
 	    # t=t+K
 	  # }
-	 
+
 	  # if(class(XX[,k])[1]=="ordered" | class(XX[,k])[1]=="numeric" | class(XX[,k])[1]=="integer"){
-	 
+
 	    # for(l in (1:(K-1))){
 	       # temp[t+m+l-1]=1
 	       # temp[t+m+l]=-1
 		   # A[T,]=temp
 		   # T=T+1
 		   # #A=rbind(A,temp)
-		  
+
 		   # temp=rep(0,c(m+n))
 	       # temp[t+m+l-1+K]=-1
 		   # temp[t+m+l+K]=1
@@ -1120,9 +1120,9 @@ subgroup_discovery_fca_milp=function(dat,target,target.class,nrep,heuristic,remo
 		  # }
 	     # t=t+2*K
 	  # }
-	 
-	 
-	 
+
+
+
 	  # #t=t+K
 	 # }
 	 # T=T-1
@@ -1132,12 +1132,12 @@ subgroup_discovery_fca_milp=function(dat,target,target.class,nrep,heuristic,remo
 	if(weighted){
 	   W=weighted.repr(X,v)
 	    v=W$yw
-        
+
 	    X=W$Xw
 	 }
-	 
+
 	 else{W=list(count=rep(1,dim(X)[1]))}
-	 
+
 	 v <<- v
 	 m=dim(X)[1]
 	 n=dim(X)[2]
@@ -1151,7 +1151,7 @@ subgroup_discovery_fca_milp=function(dat,target,target.class,nrep,heuristic,remo
 	 print(system.time(temp <- heuristic(X,v,nrep=nrep)))
 	 CUT=ceiling(temp$objval)
 	 print(CUT)
-	 
+
 	 T=rep(0,n+m)
 	 T[(which(v> 0))]=-W$count[which(v>0)]
 	 #ans$A=rbind(ans$A,matrix(T,nrow=1))
@@ -1161,9 +1161,9 @@ subgroup_discovery_fca_milp=function(dat,target,target.class,nrep,heuristic,remo
 	 ans$context=X
 	 ans$NAMES=conceptual.scaling.dim(XX)$NAMES
 	 #TEMP=heuristic.implications(X,v,NREP)
-	 
+
 	 #ans$A=rbind(ans$A,TEMP$A);ans$rhs=c(ans$rhs,TEMP$rhs);ans$sense=c(ans$sense,TEMP$sense)
-	 
+
 	 #ans$vtypes[which(ans$start>=0.5)]="B"
 	 #ans$vtypes=rep("B",length(ans$vtypes))
 return(ans)}
@@ -1172,7 +1172,7 @@ return(ans)}
 
 quality=function(sdtask,result,NAMES=colnames(sdtask$context)){  ## berechnet Piatetsky-Shapiro-Qualitätsfunktion für bereits geloestes Model (Variable result). Variable sdtask ist erzeugtes Modell aus Funktion subgroup.discovery.fca.milp
   m=sdtask$m
-  
+
   idx=which(result$x[(1:m)]>0.5)
   jdx=which(result$x[-(1:m)]>0.5)
   n0=length(which(sdtask$obj[(1:m)]>0))
@@ -1180,7 +1180,7 @@ quality=function(sdtask,result,NAMES=colnames(sdtask$context)){  ## berechnet Pi
   p=length(which(sdtask$obj[(1:m)]>0 & result$x[(1:m)]>0.5))/n
   p0=length(which(sdtask$obj>0))/m
   return(list(n=n,n0=n0,p=p,p0=p0,ps=n*(p-p0),obj=result$objval,argmax=NAMES[jdx]))}
-   
+
 
 heuristic1=function(X,v,nrep){
   set.seed(1234567)
@@ -1254,8 +1254,8 @@ heuristic.implications=function(X,v,nrep){
 	T=PHI(PSI(temp,bg),bg)
 	I=which(T==1 & temp !=1)
 	J=which(temp==1)
-	
-	
+
+
 	if(length(I)>=1){
 	  temp2=rep(0,m+N)
 	  temp2[J]=1
@@ -1266,8 +1266,8 @@ heuristic.implications=function(X,v,nrep){
 	  #print("ee")
 	  t=t+1
 	 }
-	
-	
+
+
 }
 t=t-1
 #print(t)
@@ -1280,7 +1280,7 @@ heuristic2=function(X,v,nrep){
   n=length(i)
   objval=-Inf
   weights=v[i]
-    
+
   for(k in (1:nrep)){
     a=runif(1)
     j=runif(n)>=weights*a
@@ -1320,7 +1320,7 @@ return(list(Xw=ans[,(1:p)], yw=ans[,p+3],mean.y=ans[,p+2],count=ans[,p+1]))}
 
 Drehmatrix=function(alpha){t(rbind(c(cos(alpha),-sin(alpha)),c(sin(alpha),cos(alpha))))}  ## Erzeugt Matrix, die Drehung um Winkel alpha bewirkt qua X \mapsto X %*% Drehmatrix(alpha)
 
-convex.incidence=function(X){  ## gegeben Puntmenge von M Punkten in R^2 (uebergeben als M x 2 Matrix X), wird Kontext mit G= Menge der R^2 Punkte und M = Menge aller durch je zwei verschiedene Punkte aus G beschriebenen Halbräume sowie gIm iff Punkt g liegt in (abgeschlossenem) Halbraum m 
+convex.incidence=function(X){  ## gegeben Puntmenge von M Punkten in R^2 (uebergeben als M x 2 Matrix X), wird Kontext mit G= Menge der R^2 Punkte und M = Menge aller durch je zwei verschiedene Punkte aus G beschriebenen Halbräume sowie gIm iff Punkt g liegt in (abgeschlossenem) Halbraum m
   n=dim(X)[1]
   m=n*(n-1)/2
   I1=array(0,c(n,m))
@@ -1334,7 +1334,7 @@ convex.incidence=function(X){  ## gegeben Puntmenge von M Punkten in R^2 (ueberg
      for(l in ((k+1):n)){
 	   NAMES[t]=paste(rownames(X)[c(k,l)],collapse="")
 	   NAMES2[t]=paste(rownames(X)[c(l,k)],collapse="")
-	   
+
         for(M in (1:n)){
            v1=X[k,]-X[l,]
            v2=X[M,]-X[l,]
@@ -1351,7 +1351,7 @@ convex.incidence=function(X){  ## gegeben Puntmenge von M Punkten in R^2 (ueberg
   colnames(I2)=NAMES2
   rownames(I1)=rownames(X)
   rownames(I2)=rownames(X)
-  
+
 return(list(context=(cbind(I1,I2)),indexs=rbind(indexs,indexs),X=X))}
 
 
@@ -1366,7 +1366,7 @@ convex.implications=function(bg){
   for(k in (1:(n-2))){
     print(k)
      for(l in ((k+1):(n-1))){
-      
+
         m=n-l
         I=array(0,c(n,n))
         diag(I)=1
@@ -1378,7 +1378,7 @@ convex.implications=function(bg){
             H=H.attr(temp,bg)
             I[t,which(H==1&temp==0 )]=1
             temp[t]=0
-         }   
+         }
          J=neighbour.incidence(I)
          diag(J)=0
          indexs=which(J==1,arr.ind=TRUE)
@@ -1394,11 +1394,11 @@ convex.implications=function(bg){
                 temp2[indexs[u,2]]=1
                 ans$conclusion[T,(1:n)]=as.logical(temp2)
                 T=T+1
-              }  
+              }
              }
             }
-            
-        
+
+
      }
   }
   T=T-1
@@ -1420,29 +1420,29 @@ convex.generic.base=function(bg,HOP=convex.H.obj2){ # berechnet generische Basis
   print(k)
     for(l in ((k+1):(M-1))){
       for(m in ((l+1):M)){
-	  
+
         temp=rep((0),M)
-		
+
         temp[c(k,l,m)]=1
-		
+
         H=HOP(temp,bg)
-		
+
         H[c(k,l,m)]=0
-		
+
         ans$premise[t,(1:M)]=(temp)
-		
+
         ans$conclusion[t,(1:M)]=(H)
 		#print(M)
         t=t+1
-		
+
       }
     }
   }
 return(ans)}
 
 
-        
-          
+
+
 MILP.from.implications=function(implications,binary=TRUE){## fuer lpSolveAPI
   m=dim(implications$premise)[1]
   m2=dim(implications$premise)[2]
@@ -1474,7 +1474,7 @@ MILP.from.implications=function(implications,binary=TRUE){## fuer lpSolveAPI
 	jndex=which(implications$conclusion[k,]==1)
     l.index=length(index)
 	l.jndex=length(jndex)
-    
+
 	A[k,index]=1
 	A[k,jndex]=-1/l.jndex
 	rhs[k]=l.index-1
@@ -1487,14 +1487,14 @@ MILP.from.implications=function(implications,binary=TRUE){## fuer lpSolveAPI
 
 #if(binary){for(k in (1:m2)){set.type(LP,"binary")} }
 return(list(A=A,lb=rep(0,m2),ub=rep(1,m2),vtypes=rep("B",m2),modelsense="max",sense=rep("<",m),rhs=rhs))}
-      
-      
+
+
 MILP.from.generic.base.from.convex.incidence=function(bg,binary=TRUE,max.card=dim(bg$context)[2],DIST,maxdist,HOP=convex.H.obj2){
 
 ## erzeugt MILP Model ueber die Implementation von Contsraints, die das Repsektieren der generischen (Gegenstands-) Implikationsbasis sicherstellen
 
                           ##hieß früher LP.from.convex.incidence.simple
-						  
+
 # bg:Liste mit Objekt context, das Kontext und Objekt X, das ursprüngliche Datenmatrix X enthält
 
   n=dim(bg$context)[1]
@@ -1527,24 +1527,24 @@ MILP.from.generic.base.from.convex.incidence=function(bg,binary=TRUE,max.card=di
             i=which(H==1)
             j=length(i)
             if(j!=0){
-            
-            
+
+
              ii[(tt:(tt+j-1))] <- T
              jj[(tt:(tt+j-1))] <- i
              vvv[(tt:(tt+j-1))]<- 1/j
              tt=tt+j
-             
+
              ii[(tt:(tt+2))]=T
              jj[(tt:(tt+2))]=c(k,l,m)
              vvv[(tt:(tt+2))]=-1
               tt=tt+3
-             
-            
+
+
               #A[T,i]=1/j
               sense[T]=">="
               #A[T,c(k,l,m)]=-1
               rhs[T]=-2
-              
+
 			  indexs[T,]=c(k,l,m)
 			  T=T+1
             }
@@ -1557,10 +1557,10 @@ MILP.from.generic.base.from.convex.incidence=function(bg,binary=TRUE,max.card=di
           vvv=vvv[(1:tt)]
           gc()
        model=list(A=simple_triplet_matrix(i=ii[(1:tt)],j=jj[(1:tt)],v=vvv[(1:tt)])  ,obj=NULL,modelsense="max",rhs=rhs[(1:T)],sense= sense[(1:T)],vtypes=rep('B',n) ,D=D,indexs=indexs)
-       
+
        return(model=model)}
 
-      
+
   #############
 
 convex.H.obj=function(A,bg){## Huellenoperator Phi \circ Psi speziell fuer einen Geomtrie-Kontext (also mit G= Punkte in R^2 und M Halbräume
@@ -1586,34 +1586,34 @@ simplify.geometry.model=function(model){### vereinfact Geometrie-Modell. geht nu
 										### Es werden alle Implikationen, für die die Prämisse mindestens eine Variable enthält, für die die Zielfunktion negativ ist, entfernt. geht nur für generische Basis. Beweis dafür, dass das funktioniert, ist noch nicht geführt.
   m=dim(model$A)[1]
   n=dim(model$A)[2]
-  
+
  idx=rep(1,m)
  negative.indexs=which(model$obj<0)
- 
+
  for( k in (1:m)){ if(any(model$indexs[k,] %in%negative.indexs)){idx[k]=0}}#temp=which(as.vector(model$A[k,(1:n)])<0);if(any(v[temp]<0)){idx[k]=0}}
- 
+
  idx=which(idx==1)
  ans=model
  ans$A=model$A[idx,(1:n)]
  ans$sense=model$sense[idx]
  ans$rhs=ans$rhs[idx]
  return(ans)}
- 
-###################  
+
+###################
 
 
 simplify.geometry.model2=function(modell){### vereinfact Geometrie-Modell. geht nur wenn Zielfunktion bereits spezifiziert (in modelobj).
 										### Es werden alle Implikationen, für die die Prämisse mindestens eine Variable enthält, für die die Zielfunktion negativ ist, entfernt. geht nur für generische Basis. Beweis dafür, dass das funktioniert, ist noch nicht geführt.
-  model=modell										
+  model=modell
   m=dim(model$A)[1]
   n=dim(model$A)[2]
-  
+
  idx=rep(0,m)
  negative.indexs=which(model$obj<0)
 
- 
+
  for( k in (1:m)){ if( !any(model$indexs[k,] %in%negative.indexs)){
-  
+
  idx[k]=1
  i=which(model$A[k,(1:n)]>0)
  #print("f")
@@ -1626,23 +1626,23 @@ simplify.geometry.model2=function(modell){### vereinfact Geometrie-Modell. geht 
  }
  }
  #}#temp=which(as.vector(model$A[k,(1:n)])<0);if(any(v[temp]<0)){idx[k]=0}}
- 
+
  idx=which(idx==1)
  ans=model
  ans$A=model$A[idx,(1:n)]
  ans$sense=model$sense[idx]
  ans$rhs=ans$rhs[idx]
  return(ans)}
- 
-###################  
-      
-      
+
+###################
+
+
 
 MILP.from.minmin.base.from.convex.incidence=function(bg,binary=TRUE,max.card=dim(bg$context)[1],DIST,maxdist){
   NN=choose(dim(bg$context)[1],3)*dim(bg$context)[1]/5
   m=dim(bg$context)[1]
   #LP=make.lp(nrow=1,ncol=n)
-  
+
    T=1
     A=array(as.logical(0),c(NN,m))#sparseMatrix(i=2*n^4,j=n,dims=c(2*n^4,n))#sparseMatrix((0),nr=2*n^4,nc=n)
     rhs=rep(0,NN)
@@ -1651,10 +1651,10 @@ MILP.from.minmin.base.from.convex.incidence=function(bg,binary=TRUE,max.card=dim
      second.indexs=which(DIST[k,]<=maxdist)
      #print(second.indexs[-(1:k)])
      for(l in setdiff(second.indexs,(1:k))){
-        
+
         I=array(0,c(m,m))
         diag(I)=1
-        third.indexs=which(DIST[k,]<=maxdist +000& DIST[l,]<=maxdist+000) 
+        third.indexs=which(DIST[k,]<=maxdist +000& DIST[l,]<=maxdist+000)
         for(t in setdiff(third.indexs,c(k,l))){
             temp=rep(0,m)
             temp[k]=1
@@ -1668,15 +1668,15 @@ MILP.from.minmin.base.from.convex.incidence=function(bg,binary=TRUE,max.card=dim
          diag(J)=0
          indexs=which(J==1,arr.ind=TRUE)
          M=dim(indexs)[1]
-         
+
             if(M!=0){
               for(u in (1:M)){
                #H=rep(0,n)
                #H[c(k,l,indexs[u,1])]=1
                #H=H.attr(H,bg)
                if( TRUE | indexs[u,1]>l){# & sum(H) <= max.card & max(DIST[k,l],DIST[k,indexs[u,1]],DIST[l,indexs[u,1]]) <= maxdist){
-               
-                
+
+
                # add.constraint(lprec=LP,xt=c(1,-1,-1,-1),type=">=",rhs=-2,indices=c(indexs[u,2],k,l,indexs[u,1]))
                 #if(k==27 &l ==30 &(TRUE|indexs[u,1]==39)){print("GGGGGGGG")}
                 A[T,indexs[u,2]]=1
@@ -1684,15 +1684,15 @@ MILP.from.minmin.base.from.convex.incidence=function(bg,binary=TRUE,max.card=dim
                 A[T,l]=-1
                 A[T,indexs[u,1]]=-1
                 rhs[T]=-2
-                
-                
-               
+
+
+
                 T=T+1
                  if(T>NN){print(T);T=T-1;model=list(A=A[(1:T),],obj=NULL,modelsense="max",rhs=rhs[(1:T)],sense= rep('>',T),vtypes=rep('B',m) );return(list(model=model))}
              }
             }
-            
-        
+
+
      }
   } }
   T=T-1
@@ -1705,15 +1705,15 @@ diameter.model=function(i,j,model,X,D=as.matrix(dist(X))){###  Berechnet Model z
 	nij=(X[j,]-X[i,])/D[i,j]
 	m=dim(X)[1]
 	idx=rep(0,m)
-	
+
 	for(k in (1:m)[-c(i,j)]){
 	   vik=(X[k,]-X[i,])
-	   
+
 	   #y2*x1-y1*x2,
-	   
+
 	   if( (X[k,2]-X[i,2])*(X[j,1]-X[i,1])-(X[j,2]-X[i,2])*(X[k,1]-X[i,1])<0 |(nij%*%vik) <0 | D[i,k]>D[i,j] | D[j,k]>D[i,j]){idx[k]=1}
 	}
-	
+
 	ans=model
 	ans$ub[which(idx==1)]=0
 	ans$lb[c(i,j)]=1
@@ -1727,10 +1727,10 @@ return(ans)}
 plot.implications=function(implications,names=(1:(dim(implications$premise)[2]))){
   m=dim(implications$premise)[1]
   for(k in (1:m)){
-    if(all(implications$premise[k,]==0)){print(paste(c("{}",  "  ==>  ", names[which(implications$conclusion[k,]==1)]),collapse=" "))} 
-    else{print(paste(c(names[which(implications$premise[k,]==1)], "  ==>  ", names[which(implications$conclusion[k,]==1)]),collapse=" "))} 
+    if(all(implications$premise[k,]==0)){print(paste(c("{}",  "  ==>  ", names[which(implications$conclusion[k,]==1)]),collapse=" "))}
+    else{print(paste(c(names[which(implications$premise[k,]==1)], "  ==>  ", names[which(implications$conclusion[k,]==1)]),collapse=" "))}
    }
- }    
+ }
 
 
 
@@ -1738,8 +1738,8 @@ plot.implications=function(implications,names=(1:(dim(implications$premise)[2]))
 
 
 
- 
- 
+
+
 ##########################################
 ########			     	      ########
 #######						       #######
@@ -1747,8 +1747,8 @@ plot.implications=function(implications,names=(1:(dim(implications$premise)[2]))
 #######                            #######
 ########				          ########
 ##########################################
- 
- 
+
+
 context.levels=function(X){  ### berechnet Levelfunktion fuer begriffliches Quantilkonzept
   n=dim(X)[1]
 
@@ -1760,7 +1760,7 @@ context.levels=function(X){  ### berechnet Levelfunktion fuer begriffliches Quan
     l[k]=max(B[which(temp==1)])
   }
   F=ecdf(l)
-return(F(l))} 
+return(F(l))}
 
 
 
@@ -1770,7 +1770,7 @@ return(F(l))}
 ######     VC-theorie und FBA       ######
 #######                            #######
 ########				          ########
-########################################## 
+##########################################
 
 
 VC.impl=function(imp){## berechnet VC-Dimension eines Huellensystems, das durch ein Implikationsbasis imp gegeben ist. Achtung: Geht nicht fuer jede Basis. Konklusionen der Implikationen der Basis muessen maximimal bezueglich Mengeninklusion (bezogen auf das System aller geltenden Implikationen (nicht einer Basis)) sein
@@ -1802,16 +1802,16 @@ extent_VC=function(X,additional.constraint=TRUE){  # Berechnet VC-Dimension eine
     ans$rhs[t]=n
     ans$sense[t]="<="
     t=t+1
-    
+
     ans$A[t,j+m]=1       ## b)
     ans$A[t,i]=-1
     ans$rhs[t]=0
     ans$sense[t]=">="
     t=t+1
   }
-  
-  
-  
+
+
+
   for(j in (1:n)){
     i=which(X[,j]==0)     ## a)
     ans$A[t,i]=1
@@ -1819,24 +1819,24 @@ extent_VC=function(X,additional.constraint=TRUE){  # Berechnet VC-Dimension eine
     ans$rhs[t]=m
     ans$sense[t]="<="
     t=t+1
-    
+
     ans$A[t,i]=1       ## b)
     ans$A[t,j+m]=-1
     ans$rhs[t]=0
     ans$sense[t]=">="
     t=t+1
   }
-    
-    
+
+
 ans$modelsense="max"
 ans$lb=rep(0,m+n)
 ans$ub=rep(1,m+n)
 ans$vtypes=c(rep("B",m),rep("B",n))
-ans$obj=c(rep(1,m),rep(0,n))   
+ans$obj=c(rep(1,m),rep(0,n))
 
 ans$A=rbind(ans$A,c(rep(1,m),rep(0,n)),c(rep(0,m),rep(1,n)),rep(1,m+n))
 ans$rhs=c(ans$rhs,min(m,n),min(m,n),n+m)
-ans$sense=c(ans$sense,"<=","<=","<=") 
+ans$sense=c(ans$sense,"<=","<=","<=")
 
 if(additional.constraint){
   ans$A=rbind(ans$A,c(rep(-1,m),rep(1,n)))
@@ -1871,12 +1871,12 @@ local_object_VCdims=function(X,indexs=(1:dim(X)[1]),outputflag,timelimit,pool=FA
 	temp=extent.VC((X))
     temp$lb[k]=1
 	}
-	
-    
+
+
     if(pool){a=gurobi(temp,list(outputflag=outputflag,timelimit=timelimit,PoolSolutions=100000000,PoolSearchMode=2,Poolgap=0.00001))}
 	else{a=gurobi(temp,list(outputflag=outputflag,timelimit=timelimit,threads=threads))}
 	a <<- a
-    ans[[k]]=a	
+    ans[[k]]=a
     vcdims[k]=a$objval
     vccounts[k]=length(a$pool)
 	print(a$objval)
@@ -1895,21 +1895,21 @@ local_object_VCdims.Hannah=function(X,indexs=(1:dim(X)[1]),outputflag,timelimit,
   for(k in indexs){
     i=which(X[k,]==1)
     if(transpose){
-	
-	  
+
+
 	  temp=extent.VC(t(X[,i]),additional.constraint=additional.constraint)
-      
+
 	}
 	else{
 	temp=extent.VC(X[,i],additional.constraint=FALSE)
-    
+
 	}
-	
-    
+
+
     if(pool){a=gurobi(temp,list(outputflag=outputflag,timelimit=timelimit,PoolSolutions=100000000,PoolSearchMode=2,Poolgap=0.00001))}
 	else{a=gurobi(temp,list(outputflag=outputflag,timelimit=timelimit))}
-	
-    	
+
+
     vcdims[k]=a$objval
     vccounts[k]=length(a$pool)
 	print(a$objval)
@@ -1938,7 +1938,7 @@ for(k in (1:ncontranominalscales)){
 return(ans)}
 
 
- 
+
 
 
 ##########################################
@@ -1947,7 +1947,7 @@ return(ans)}
 ######   Metrische Aspekte in FBA   ######
 #######                            #######
 ########				          ########
-########################################## 
+##########################################
 
 object_dist=function(i,j,context){
   m=dim(bg$context)[1]
@@ -1967,7 +1967,7 @@ object_dist_mat <- function(context){
 		  ans[k,l]=object_dist(k,l,context)
 	  }
  }
-	
+
 return(ans)}
 
 attribute_dist_mat <- function(context){
@@ -1978,14 +1978,14 @@ attribute_dist_mat <- function(context){
 		  ans[k,l]=attribute_dist(k,l,context)
 	  }
  }
-	
-return(ans)}
-		  
 
-  
-  
- 
- 
+return(ans)}
+
+
+
+
+
+
 estimate.concept.lattice.size=function(bg,nrep){    #### Schätzt Anzahl von formalen Begriffen über Monte-Carlo-Simulation
   m=dim(bg$context)[2]
   a=rep(0,nrep)
@@ -2006,8 +2006,8 @@ concept.lattice.sample=function(bg,nrep){   #### Zieht zufällig formale Begriff
    a[k,]=H
   }
 return(a)}
- 
- 
+
+
 
 attr.impl=function(index,bg){### berechnet, was aus {index} folgt
    n=dim(bg$context)[2]
@@ -2024,7 +2024,7 @@ random.impl=function(premise.supp,conclusion.supp,bg){
    temp=attr.impl(index,bg)
    if(length(temp)>=conclusion.supp){return(list(premise=index,conclusion=temp))}
  }
-}  
+}
 
 
 
@@ -2032,8 +2032,8 @@ random.impl=function(premise.supp,conclusion.supp,bg){
 stepsize=5000
 
 cond.print=function(text,step,stepsize){if(stepsize != Inf){if(step %% stepsize ==0 | step==1){print(text)}}}
- 
- 
+
+
 #simple.implication.incidence=function(X){  ???
 #  m=dim(X)[2]
 #  I=array(0,c(m,m));diag(I)=1
@@ -2054,8 +2054,8 @@ cond.print=function(text,step,stepsize){if(stepsize != Inf){if(step %% stepsize 
 #######                            #######
 ########				                  ########
 ##########################################
-					     
-						     
+
+
 
 
 
@@ -2063,19 +2063,19 @@ cond.print=function(text,step,stepsize){if(stepsize != Inf){if(step %% stepsize 
 
 
 compute_quotient_order <- function(I){
-  
+
   #computes quotient order from a quasiorder
 index <- !duplicated(I)&!duplicated(t(I));return(I[index,index])}
 
- 
+
 
 compute_stylized_betweeness <- function(g,h,i,context, attribute_weights){
-  
+
   common_attributes <- which(g==1 & i==1)
   if(length(common_attributes)==0){return(1)}
   ans <- 1-max((1-h[common_attributes])*attribute_weights[common_attributes])
   return(ans)
-  
+
 }
 
 
@@ -2096,22 +2096,22 @@ return(compute_transitive_hull(I>=ans$root))}
 
 
 starshaped_subgroup_discovery  <- function(stylized_betweenness,objective,vc_dim,params=list(Outputflag=0)){
-  
+
   if (dim(stylized_betweenness)[1] != dim(stylized_betweenness)[2] | dim(stylized_betweenness)[1] != dim(stylized_betweenness)[3] | dim(stylized_betweenness)[2] != dim(stylized_betweenness)[3]){print("dimension mismatch")}
   m <- nrow(stylized_betweenness)
   model <- list(modelsense="max",obj=objective,lb=rep(0,m),ub=rep(1,m))
   solutions <- list()
   objvals <- rep(0,m)
   stars <- array(0,c(m,m))
-  
+
   models=list()
   for(k in (1:m)){  ## quantify over all starcenters
-    
-    
+
+
     if (vc_dim == Inf) { incidence <- (stylized_betweenness[k,,] >= max(stylized_betweenness[k,,]))*1}
     else{ incidence <- cut_incidence(Z[k,,],vc_dim) }
-    
-    
+
+
     model <- model_from_qoset(t(incidence))# Z[k,,]))
     model$obj <- objective
     model$lb <- rep(0,m)
@@ -2122,19 +2122,19 @@ starshaped_subgroup_discovery  <- function(stylized_betweenness,objective,vc_dim
     solutions[[k]] <- b
     objvals[k] <- b$objval
     stars[k,] <- b$x
-    
+
     models[[k]] =model
-    
-    
-  } 
-  i <- which.max(objvals) 
-  
-  
+
+
+  }
+  i <- which.max(objvals)
+
+
   #I <<- stylized_betweeness[i,,]
   if (vc_dim == Inf) { incidence <- (stylized_betweenness[i,,] >= max(stylized_betweenness[k,,]))*1}
   else{incidence <- cut_incidence(stylized_betweenness[i,,],vc_dim)}
-  
-  
+
+
   model <- model_from_qoset(t(incidence))
   model$obj <- objective
   model$lb <- rep(0,m)
@@ -2146,56 +2146,56 @@ starshaped_subgroup_discovery  <- function(stylized_betweenness,objective,vc_dim
   #objvals[k] <- b$objval
   #stars[k,] <- b$x
   #incidence <- cut_incidence(Z[i,,],vc_dim)
-  
+
 return(list(models=models,obj=objective,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i,fuzzy_incidence=stylized_betweenness[i,,] , incidence = incidence,model=model) )}
 
 plot_stars <- function(starshaped_result,distance_function){
-  
+
   i <- which(starshaped_result$star==1)
-  
+
   j <- compute_maximal_elements(starshaped_result$incidence[i,i])
-  
-  
+
+
   i[j]
   print(i[j])
-  
-  
-  
-  
-  
+
+
+
+
+
 }
 
 plot_corder <- function(corder,main=""){
   m <- nrow(corder)
   plot(as.relation(corder[(1:m),(1:m)]),main=main)
-  
+
 }
 
 starshaped_subgroup_discovery_recompute <- function(models,objective){
-  
-  
-  
+
+
+
   ans <- -Inf
   for(k in (1: length(models))){
     M <- models[[k]]
     M$obj <- objective
-    ans <- max(ans,gurobi(M)$objval)
+    ans <- max(ans,gurobi(M,param=list(outputflag=0))$objval)
   }
-  
+
   return(ans)}
 
 
 starshaped_subgroup_discovery_h0 <- function(models,params=list(outputflag=0)){
-  
+
   v <- sample(models[[1]]$obj)
-  
+
   ans <- -Inf
   for(k in (1: length(models))){
     M <- models[[k]]
     M$obj <- v
     ans <- max(ans,gurobi(M,params=params)$objval)
   }
-  
+
   return(ans)}
 
 
@@ -2216,17 +2216,17 @@ starshaped_subgroup_discovery_old  <- function(Z,u,params=list(Outputflag=0)){#x
 	  solutions[[k]] <- b
 	  objvals[k] <- b$objval
 	  stars[k,] <- b$x
-	  
-	  
-	  
-  } 
-  i <- which.max(objvals) 
+
+
+
+  }
+  i <- which.max(objvals)
 return(list(obj=u,solutions=solutions,objvals=objvals,stars=stars,objval=objvals[i],star=stars[i,],center_id =i))}
-  
-  
+
+
 
 model_from_qoset <- function(Q){## constructs linear program for the optimization over all upsets of a quasiordered set Q
-	
+
   QQ <- tr(Q)
   m  <- sum(QQ)
   n  <- dim(QQ)[1]
@@ -2239,12 +2239,12 @@ model_from_qoset <- function(Q){## constructs linear program for the optimizatio
 	      A[t,k]=1;A[t,l]=-1
 		  t=t+1
 		}
-		
+
 	   if(QQ[k,l]==0 &QQ[l,k]==1){
 	      A[t,k]=-1;A[t,l]=1
 		  t=t+1
 	   }
-	   
+
 	   if(QQ[k,l]==1 &QQ[l,k]==1){
 	      A[t,k]=1;A[t,l]=-1
 		  sense[t]="="
@@ -2254,12 +2254,12 @@ model_from_qoset <- function(Q){## constructs linear program for the optimizatio
   }
   t <- t-1
  ans <- list(A=A[(1:t),],rhs=rep(0,t),sense=sense[(1:t)],lb=rep(0,n),ub=rep(1,n))
-return(ans)}  
+return(ans)}
 
 
 
 classification.with.stylized.betweeness=function(x.train,y.train,x.test,y.test,stylizedBetweenness=sb1,p,VCDim,params=list(outputFlag=0,presolve=0,threads=1),VCcut=TRUE,interval){
-  
+
   print(Sys.time())
   m.train <- dim(x.train)[1]
   m.test  <- dim(x.test)[1]
@@ -2278,7 +2278,7 @@ classification.with.stylized.betweeness=function(x.train,y.train,x.test,y.test,s
   sol2=list()
   t=1
   sols=list()
-  
+
   for(kkk in (1:length(stylizedBetweenness))){
   kkk<<-kkk
   SB <- (stylizedBetweenness[kkk])
@@ -2287,11 +2287,11 @@ classification.with.stylized.betweeness=function(x.train,y.train,x.test,y.test,s
   B       <- SB(X,p=p)
   FI      <- pmin(B$A,B$B)
   FII <<- FI
-  
-  
-  
+
+
+
   for(k in (1:m)){
-  
+
 	   if(VCcut){J=incidence.cut(FI[k,,],width=VCDim[kkk],interval=interval)}#c(sort(unique(as.vector(FI[k,,])))[2],1))}
 	   else{J=incidence.cut2(FI[k,,],width=VCDim[kkk],interval=c(sort(unique(as.vector(FI[k,,])))[2],1))}
       II[k,,]=pmax(II[k,,],(J))
@@ -2306,17 +2306,17 @@ for(kkk in (1:m)){
 VCDIMS[kkk]=(width.hopcroft.karp(transitive.hull(II[kkk,,]))$width)}
 Print(table(VCDIMS))
   II=CUT(II,EPS,m.train)
-  
+
     II <<- II
   print(Sys.time())
-  
+
   for (ind in (1:m.test)){
     index <- c((1:m.train), ind+m.train)
     #print(Sys.time())
     for(k in (1:m.train)){  ## quant ueber alle sternmittelpunkte## hier auch m moeglich
       M <- model_from_qoset(II[k,index,index])
       M$lb[k] <- 1              ## Sternmittelpunkt drinnen
-  
+
   #1
       v <- rep(0,m.train+1);v[(1:m.train)]=probabilityDifferences(y.train,label=labels[1])
       M$modelsense <- "max"
@@ -2325,45 +2325,45 @@ Print(table(VCDIMS))
       b <- gurobi(M,params=params)
       ansplus[k] <- b$objval
 	  ansplussol[[k]]=b$x
-	  
+
 	  sols[[t]]=b$x
 	  t=t+1
-	  
+
 	  ##fuer vortrag:
-	  
+
 	  #if(k==K){
 	  #b <<- b
 	  #}
-  
-  
+
+
   #2
-    
+
 	  v <- rep(0,m.train+1);v[(1:m.train)]=probabilityDifferences(y.train,label=labels[2])
       M$obj <- v
       b <- gurobi(M,params=params)
       ansminus[k] <- b$objval
 		ansminussol[[k]]=b$x
-		
+
 		sols[[t]]=b$x
 	  t=t+1
-		
-  
-  #3  
+
+
+  #3
       v <- rep(0,m.train+1);v[(1:m.train)]=probabilityDifferences(y.train,label=labels[1])
-      M$obj <- v  
+      M$obj <- v
       M$lb[m.train+1] <- 0;M$ub[m.train+1] <- 0  ### testpunkt nicht drinnen
       M$modelsense <- "min"
       b <- gurobi(M,params=params)
       if(is.null(b$objval)){print("warning: no feasible solution")}
-   
+
       if(!is.null(b$objval)){bnsplus[k]=-b$objval}
 		bnsplussol[[k]]=b$x
-		
+
 		sols[[t]]=b$x
 	  t=t+1
-	  
-	  
-  
+
+
+
   #4
       v <- rep(0,m.train+1);v[(1:m.train)]=probabilityDifferences(y.train,label=labels[2])
       M$obj <- v
@@ -2371,14 +2371,14 @@ Print(table(VCDIMS))
       if(is.null(b$objval)){print("warning: no feasible solution")}
       if(!is.null(b$objval)){bnsminus[k]=-b$objval}
 	  bnsminussol[[k]]=b$x
-  
+
   sols[[t]]=b$x
 	  t=t+1
     }
-  
+
     AP[ind,] <- c(ansplus,bnsplus)
     AM[ind,] <- c(ansminus,bnsminus)
- 
+
   }
   predictions <- factor(rep(y.train[1],m.test),level=labels)
   unique=rep(0,m.test)
@@ -2387,7 +2387,7 @@ Print(table(VCDIMS))
     else{predictions[k] <- labels[2];sol[[k]]=ansminussol[[k]];sol2[[k]]=bnsminussol[[k]]}
 	if(max(AP[k,]) > max(AM[k,]) | max(AP[k,]) < max(AM[k,])){unique[k]=1}
   }
-   
+
 return(list(AP=AP,AM=AM,predictions=predictions,errorProb=mean(y.test!=predictions),unique=unique, unique.prop=mean(unique),betweenProb=betweennessProb(II[(1:m.train),(1:m.train),(1:m.train)],y.train),sol=sol,sol2=sol2,sols=sols))}
 
 
@@ -2405,20 +2405,20 @@ sb1=function(XR,p){
   C=A
   D=as.matrix(dist(XR,method="minkowski",upper=TRUE,p=p))
   MAXD=max(D)#Q=quantile(D,QQ)
-  
+
   for(K in (1:m)){#(1:(m-2))){
   for(L in (1:m)){#((K+1):(m-1))){
   for(M in (1:m)){#((L+1):m)){
    #A[K,L,M]=max(0,D[L,K]-D[M,K],D[L,M]-D[K,M])
    A[K,L,M]=sum(D[K,M])/(sum(D[K,L]+D[L,M]))
    B[K,L,M]=(D[K,L]<D[K,M])#*D[K,M]/MAXD#<=Q
-   
+
    #temp=sign((XR[L,]-XR[K,])*(XR[M,]-XR[K,]))
    #temp2=abs(XR[L,]-XR[K,]) < abs(XR[M,]-XR[K,])
    #i=which(temp>=0 &temp2)
    #A[K,L,M]=length(i)
    #B[K,L,M]=sum(abs(temp[i]))
-   
+
    }}}
    for(K in (1:m)){
    diag(A[K,,])=1
@@ -2428,7 +2428,7 @@ sb1=function(XR,p){
 ##################################################################
 ##################################################################
 ################                                 #################
-###############     Data Depth in FCA             ################  
+###############     Data Depth in FCA             ################
 ################                                 #################
 ##################################################################
 
@@ -2448,14 +2448,14 @@ star_depth <- function(context, index_modus){    ## computes a simple depth func
      extent[index_modus] <- 1
      extent[k] <- 1
      extent <- operator_closure_obj_input(extent,context)
-     ans[k] <- sum(extent) 
+     ans[k] <- sum(extent)
 
   }
 return(m-ans)
 }
 
 
-star_depth2 <- function(context, index_modus){ ## computes a another simple depth function adding for every point to all other points between this point and a center a one 
+star_depth2 <- function(context, index_modus){ ## computes a another simple depth function adding for every point to all other points between this point and a center a one
 
 # This depth function is not quasiconcave but star-haped if the context is complemented (is this assumption needed? NO!)
 
@@ -2470,12 +2470,12 @@ star_depth2 <- function(context, index_modus){ ## computes a another simple dept
    }
 return(ans)
 }
-						     
-						     
-# properties of depth functions	
-						     
+
+
+# properties of depth functions
+
 is_quasiconcave <- function(depths, context){
-	
+
 	m <- nrow(context)
 	for(k in (1:m)){
 		i <- which(depths > depths[k])
@@ -2483,12 +2483,12 @@ is_quasiconcave <- function(depths, context){
 		if(operator_closure_obj_input(extent,context)[k]==1){return(FALSE)}
 	}
 return(TRUE)
-	
+
 }
-						     
-				
+
+
 is_strictly_quasiconcave <- function(depths, context){
-	
+
 	m <- nrow(context)
 	for(k in (1:m)){
 		i <- which(depths >= depths[k])
@@ -2497,11 +2497,11 @@ is_strictly_quasiconcave <- function(depths, context){
 		if(operator_closure_obj_input(extent,context)[k]==1){return(FALSE)}
 	}
 return(TRUE)
-	
+
 }
-						     
+
 strictly_quasiconcave_pseudohull <- function(depths, context){
-	
+
 	m <- nrow(context)
 	ans <- depths
 	for(k in (1:m)){
@@ -2511,52 +2511,52 @@ strictly_quasiconcave_pseudohull <- function(depths, context){
 		if(operator_closure_obj_input(extent,context)[k]==1){ans[k] <- ans[k]+1/100/m}
 	}
 return(ans)
-	
-}	
-						     
 
-						     
-						     
+}
+
+
+
+
 ### depth functions in the context of poset-data
-						     
-						     
+
+
 Tukeys_true_median_order <- function(orders,startorder=orders[[1]]*0){   ## coputes that partial order in the space of ALL partial orders that has the maximal tukeys depth wr.t. the given data cloud representet by th given contetxt (given in the form of a list of posets, where every etry of the list is an incidence relation apposited with its negation (In terms of conceptual scaling we use here the complemented scaling
-	
+
  m <- length(orders)
  q <- nrow(orders[[1]])
  W=Reduce('+',orders)
  ans_old <- ans_new <- startorder#orders[[1]]*0#array(0,dim(orders[[1]]))
- 
+
  while(TRUE){
     w <- max(W[which(ans_old==0)])
     i <- which(ans_old==0 & W==w)
-    i <- sample(rep(i,2),size=1)	
+    i <- sample(rep(i,2),size=1)
     ans_new <- ans_old
     ans_new[i] <- 1
     if(! is_extendable_to_partial_order(ans_new)){
 	ans_old <<- ans_old
 	ans_new <<- ans_new
 	#return(ans_old)}
-	 
+
 	return(cbind(ans_old[,(1:q)],1-ans_old[,(1:q)]))}
 	M1 <- ans_new[,(1:q)]
 	diag(M1) <- 1
 	M1 <- relation_incidence(transitive_closure(as.relation(M1)))
-	M2 <- ans_new[,-(1:q)]	
+	M2 <- ans_new[,-(1:q)]
         ans_old <- cbind(M1,M2)#relation_incidence(transitive_closure(as.relation(ans_new[,(1:q)]))),ans_new[,-(1:q)])
     }
 }
 
 Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that partial order in the space of ALL partial orders that has the maximal tukeys depth wr.t. the given data cloud representet by th given contetxt (given in the form of a list of posets, where every etry of the list is an incidence relation apposited with its negation (In terms of conceptual scaling we use here the complemented scaling
-	
+
  m <- length(orders1)
  q <- nrow(orders1[[1]])
  W1 <- Reduce('+',orders1)
  W2 <-  Reduce('+',orders2)
  W <- pmax(W1,W2)
 	W_min <- pmin(W1,W2)
-	
-	
+
+
  W <<- W
  ans_old <- ans_new <- orders1[[1]]*0#array(0,dim(orders[[1]]))
  w  <- max(W[which(ans_old==0)])
@@ -2571,7 +2571,7 @@ Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that pa
 	 w <<- w
 	 W <<- W
     i <- which(ans_old==0 & W==w)
-    i <- sample(rep(i,2),size=1)	
+    i <- sample(rep(i,2),size=1)
     ans_new <- ans_old
     ans_new[i] <- 1
     if(! is_extendable_to_partial_order(ans_new)){
@@ -2581,7 +2581,7 @@ Tukeys_true_median_difference <- function(orders1,orders2){   ## coputes that pa
 	M1 <- ans_new[,(1:q)]
 	diag(M1) <- 1
 	M1 <- relation_incidence(transitive_closure(as.relation(M1)))
-	M2 <- ans_new[,-(1:q)]	
+	M2 <- ans_new[,-(1:q)]
         ans_old <- cbind(M1,M2)#relation_incidence(transitive_closure(as.relation(ans_new[,(1:q)]))),ans_new[,-(1:q)])
 	w_new <- w
     }
@@ -2600,7 +2600,7 @@ Tukeys_geodetic_median_order <- function(corders, proportion,auto=FALSE,fraction
 			if(all(intent<=TM)){proportion=k/length(corders)*fraction;break}
 		}
 	}
-	
+
 	i <- which(TD>=quantile(TD,1-proportion))
 	extent <- rep(0, length(corders))
 	extent[i] <- 1
@@ -2610,8 +2610,8 @@ Tukeys_geodetic_median_order <- function(corders, proportion,auto=FALSE,fraction
 	rownames(intent) <- rownames(corders[[1]])
 	return(Tukeys_true_median_order(orders=corders,startorder = intent))
 
-	
-	
+
+
 }
 
 is_extendable_to_partial_order <- function( complemented_order ){
@@ -2623,7 +2623,7 @@ is_extendable_to_partial_order <- function( complemented_order ){
   if(any(M1==1 & M2 ==1)){return(FALSE)}
   if(!relation_is_acyclic(as.relation(M1))){return(FALSE)}
 return(TRUE)}
-						  
+
 test_Tukeys_true_median_order <- function(){
 	q <- sample((3:5),size=1)
 	a <- all_partial_orders(q,complemented=FALSE)
@@ -2640,7 +2640,7 @@ test_Tukeys_true_median_order <- function(){
 	ans1 <<- ans1
 	ans2 <<- ans2
 	if(all(ans1==ans2)){return(TRUE)}
-	}	
+	}
 	return(FALSE)
 }
-	
+
