@@ -52,7 +52,7 @@ TD <- function(subset,context){
 
 
 library(foreign)
- a <- read.spss("ZA5240_v2-2-0.sav",use.value.labels=FALSE)
+ a <- read.spss("ZA5240_v2-1-0.sav",use.value.labels=FALSE)
  
  
  X <- data.frame(a$V217,a$V221,a$V218,a$V223,a$V219,a$V224,a$V220,a$V222,a$V173,a$V417)
