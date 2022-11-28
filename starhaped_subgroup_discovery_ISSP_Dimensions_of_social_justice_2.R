@@ -52,15 +52,6 @@ TD <- function(subset,context){
 ##### read data
 
 library(foreign)
-<<<<<<< HEAD
- a <- read.spss("ZA5240_v2-1-0.sav",use.value.labels=FALSE)
- 
- 
- X <- data.frame(a$V217,a$V221,a$V218,a$V223,a$V219,a$V224,a$V220,a$V222,a$V173,a$V417)
- 
- i <- which(X[,1] != 0 & X[,2] !=0 & X[,3]!=0 & X[,4]!=0 & X[,5]!=0 & X[,6]!=0 &X[,7]!=0 & X[,8]!=0  &  X[,1] != 9 & X[,2] !=9 & X[,3]!=9 & X[,4]!=9 & X[,5]!=9 & X[,6]!=9 &X[,7]!=9 & X[,8]!=9  & X[,9]!=9  &X[,9]!=8 & !(X[,10] %in% c(99999,99997,0)))
- 
-=======
 
   # Allbus 2014 ISSP
   a <- read.spss("ZA5240_v2-2-0.sav",use.value.labels=FALSE)
@@ -94,7 +85,6 @@ library(foreign)
 
  i <- which(X[,1] != 0 & X[,2] !=0 & X[,3]!=0 & X[,4]!=0 & X[,5]!=0 & X[,6]!=0 &X[,7]!=0 & X[,8]!=0  &  X[,1] != 9 & X[,2] !=9 & X[,3]!=9 & X[,4]!=9 & X[,5]!=9 & X[,6]!=9 &X[,7]!=9 & X[,8]!=9  & X[,9]!=9  &X[,9]!=8 & !(X[,10] %in% c(99999,99997,0)) & a$V7==1)
 
->>>>>>> 3af5b90092fc946d20f2fd260cdcad44f1d61ab3
  X <- X[i,]
 
 
