@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 
 
 library(Matrix)
@@ -5297,4 +5297,4 @@ test_Tukeys_true_median_order <- function(){
 	return(FALSE)
 }
 	
->>>>>>> 9d6d7d44f07f93f95115a475d13be90461458b68
+
