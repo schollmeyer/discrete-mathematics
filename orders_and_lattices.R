@@ -1639,9 +1639,9 @@ simplify.geometry.model2=function(modell){### vereinfact Geometrie-Modell. geht 
 
 
 
-MILP.from.minmin.base.from.convex.incidence=function(bg,binary=TRUE,max.card=dim(bg$context)[1],DIST,maxdist){
-  NN=choose(dim(bg$context)[1],3)*dim(bg$context)[1]/5
-  m=dim(bg$context)[1]
+MILP.from.minmin.base.from.convex.incidence=function(context,X,binary=TRUE,max.card=dim(context)[1],DIST,maxdist){
+  NN=choose(dim(context)[1],3)*dim(context)[1]/5
+  m=dim(context)[1]
   #LP=make.lp(nrow=1,ncol=n)
 
    T=1
@@ -1661,7 +1661,7 @@ MILP.from.minmin.base.from.convex.incidence=function(bg,binary=TRUE,max.card=dim
             temp[k]=1
             temp[l]=1
             temp[t]=1
-            H=H.obj(temp,bg)
+            H=H.obj(temp,context)
             if(length(      which(H==1&temp==0 ))>0){   I[t,which(H==1&temp==0 )]=1 }
             temp[t]=0
          }   #I[t,c(k,l)]=0
@@ -1699,7 +1699,7 @@ MILP.from.minmin.base.from.convex.incidence=function(bg,binary=TRUE,max.card=dim
   T=T-1
   #if(binary){set.type(LP,(1:n),"binary")}
   model=list(A=as.simple_triplet_matrix(A[(1:T),]),obj=NULL,modelsense="min",rhs=rhs[(1:T)],sense= rep('>',T),vtypes=rep('B',m) )
-return(list(model=model))}
+return(model)}
 
 
 diameter.model=function(i,j,model,X,D=as.matrix(dist(X))){###  Berechnet Model zu Bestimmung großer Kontranominalskalen im Geometrie-Kontext. Es wird angenommen, dass KNS Punkte i und j enthält und dass der Durchmesser der KNS durch die Punkte i und j gegeben ist. Außerdem wird nur Teil links von Durchmesser ij berechnet, d.h. Punkte, die auf der rechten Seite von ij liegen werden nicht berücksichtigt. außerdem werden auch Punkte, die zu weit weg liegen (so dass Durchmesser nicht mehr ij sein kann), ebenfalls nicht betrachtet
