@@ -36,7 +36,7 @@ context_to_list <- function(context,complemented=FALSE,colnames=NULL,rownames=NU
 	q2=q
 	if(complemented){q2 <- 2*q}
 	#for(k in (1:q)){NAMES[k] <- colnames(context[1,k])}
-	list <- list()
+	list <- list() 
 	for(k in (1:m)){
 		temp <- context[k,];dim(temp) <- c(q,q2)
 		colnames(temp) <- colnames
@@ -2645,7 +2645,7 @@ test_Tukeys_true_median_order <- function(){
 	return(FALSE)
 }
 
-=======
+
 
 
 library(Matrix)
