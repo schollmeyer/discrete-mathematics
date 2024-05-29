@@ -1987,12 +1987,12 @@ return(ans)}
 
 
 
-estimate.concept.lattice.size=function(bg,nrep){    #### Schätzt Anzahl von formalen Begriffen über Monte-Carlo-Simulation
-  m=dim(bg$context)[2]
+estimate.concept.lattice.size=function(context,nrep){    #### Schätzt Anzahl von formalen Begriffen über Monte-Carlo-Simulation
+  m=dim(context)[2]
   a=rep(0,nrep)
   for(k in (1:nrep)){
    temp=runif(m)>=0.5
-   H=H.attr(temp,bg)
+   H=H.attr(temp,context)
    if(all(H==temp)){a[k]=1}
   }
 return(mean(a)*2^m)}
